@@ -4,7 +4,7 @@ Fulfillment_Integration
 A simple sinatra web app demonstrating how to integrate an existing fulfillment service with an api into Shopify.
 
 Usage
----------
+-----
 
 Clone/Fork this repo and optionally rename it after the fulfillment service you are working with. 
 
@@ -23,14 +23,10 @@ private app for you Shopify store see (here)[http://docs.shopify.com/api/tutoria
   shop_url = "https://#{api_key}:#{pwd}@shopname.myshopify.com/admin"
   ShopifyAPI::Base.site = shop_url
 
-  fulfillment_service = ShopifyAPI::FulfillmentService.new
-  fulfillment_service.name = "name"
-  fulfillment_service.handle = "name"
-  fulfillment_service.callback_url = "http://fulfillment-service.herokuapp.com"
-  fulfillment_service.inventory_management = true
-  fulfillment_service.tracking_support = true
-  fulfillment_service.requires_shipping_method = false
-  fulfillment_service.format = 'json'
+  fulfillment_service = ShopifyAPI::FulfillmentService.new(...)
+  fulfillment_service.save
   ```
 
-Now update the desired product variants to be fulfilled with your newly integrated fulfillment service.
+You can also use and modify the `install.rb` script in this repo to help create the new fulfillment service.
+
+The last step is to update the desired product variants to be fulfilled with your newly integrated fulfillment service.

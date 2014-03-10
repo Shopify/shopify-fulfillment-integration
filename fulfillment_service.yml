@@ -1,0 +1,8 @@
+service:
+  name: "name"
+  handle: "name"
+  callback_url: "http://fulfillment-service.herokuapp.com"
+  inventory_management: true
+  tracking_support: true
+  requires_shipping_method: false
+  format: "json"
