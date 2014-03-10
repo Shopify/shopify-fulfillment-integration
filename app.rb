@@ -13,10 +13,10 @@ def forward_request
   response = Net::HTTP.get_response(uri)
 end
 
-get '/fetch_stock' do
+get '/fetch_stock.json' do
   forward_request
 end
 
-get '/fetch_tracking_numbers' do
+get '/fetch_tracking_numbers.json' do
   forward_request
 end
