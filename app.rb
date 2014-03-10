@@ -1,9 +1,23 @@
 require 'sinatra'
 require "uri"
 require 'net/http'
+require 'json'
 
+log = []
+
+# home page
 get '/' do
-  "Shopify Fulfillment Integration"
+  erb :index, :locals => {:log => log} 
+end
+
+# fetch_stock endpoint
+get '/fetch_stock.json' do
+  forward_request
+end
+
+# fetch_tracking_numbers endpoint
+get '/fetch_tracking_numbers.json' do
+  forward_request
 end
 
 def forward_request
@@ -13,10 +27,12 @@ def forward_request
   response = Net::HTTP.get_response(uri)
 end
 
-get '/fetch_stock.json' do
-  forward_request
+# Log the request
+before '/fetch*' do
+  log << "Request: #{request.fullpath}"
 end
 
-get '/fetch_tracking_numbers.json' do
-  forward_request
+# Log the response
+after '/fetch*' do
+  log << "Response: #{response.status} #{response.body}"
 end
