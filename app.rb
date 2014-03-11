@@ -1,13 +1,12 @@
-require 'sinatra'
-require "uri"
-require 'net/http'
-require 'json'
+require 'bundler/setup'
+Bundler.require
 
 log = []
 
 # home page
 get '/' do
-  erb :index, :locals => {:log => log} 
+  log = log[0..100] if log.size > 100
+  erb :index, :locals => {:log => log.reverse} 
 end
 
 # fetch_stock endpoint
@@ -29,10 +28,10 @@ end
 
 # Log the request
 before '/fetch*' do
-  log << "Request: #{request.fullpath}"
+  log << "[#{Time.now}] Request: #{request.fullpath}"
 end
 
 # Log the response
 after '/fetch*' do
-  log << "Response: #{response.status} #{response.body}"
+  log << "[#{Time.now}] Response: #{response.status} #{response.body}"
 end
