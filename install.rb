@@ -13,8 +13,6 @@ ShopifyAPI::Base.site = shop_url
 
 params = YAML.load(File.read("fulfillment_service.yml"))
 
-binding.pry
-
 fulfillment_service = ShopifyAPI::FulfillmentService.new(params["service"])
 
 if fulfillment_service.save
