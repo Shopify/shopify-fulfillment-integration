@@ -1,6 +1,6 @@
 service:
-  name: "name"
-  handle: "name"
+  name: "my-fulfillment-service"
+  handle: "my-fulfillment-service"
   callback_url: "http://fulfillment-service.herokuapp.com"
   inventory_management: true
   tracking_support: true
