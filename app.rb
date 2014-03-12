@@ -18,7 +18,7 @@ end
 # Example of a Shopify request:
 # https://myapp.com/fetch_stock?sku=123&shop=testshop.myshopify.com
 #
-get '/fetch_stock' do
+get '/fetch_stock.json' do
   sku = params["sku"]
   shop = params["shop"]
 
@@ -35,7 +35,7 @@ end
 # Example of a Shopify request:
 # http://myapp.com/fetch_tracking_numbers?order_ids[]=1&order_ids[]=2&order_ids[]=3
 # 
-get '/fetch_tracking_numbers' do
+get '/fetch_tracking_numbers.json' do
   order_ids = params["order_ids"]
   tracking_numbers = Hash[order_ids.map {|x| [x, "12345"]}]
 
