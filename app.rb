@@ -9,6 +9,13 @@ get '/' do
   erb :index, :locals => {:log => log.reverse} 
 end
 
+# /fulfill
+# reciever of fulfillments/create webhook
+post '/fulfill.json' do
+  log << "[#{Time.now}] Post: #{request.fullpath}"
+  status 404
+end
+
 # /fetch_stock
 # Listen for a request from Shopify
 # When a request is recieved make a request to fulfillment service

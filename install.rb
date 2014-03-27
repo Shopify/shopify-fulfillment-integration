@@ -20,3 +20,14 @@ if fulfillment_service.save
 else
   puts fulfillment_service.errors
 end
+
+webhook = ShopifyAPI::Webhook.new
+webhook.topic = "fulfillments/create"
+webhook.address = fulfillment_service.callback_url + "/fulfill.json"
+webhook.format = "json"
+
+if webhook.save
+  puts "new webhook added successfuly"
+else
+  puts webhook.errors
+end
