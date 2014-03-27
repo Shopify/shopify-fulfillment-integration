@@ -5,4 +5,4 @@ service:
   inventory_management: true
   tracking_support: true
   requires_shipping_method: false
-  format: "json"
+  response_format: "json"
