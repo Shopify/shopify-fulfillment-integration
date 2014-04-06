@@ -64,6 +64,7 @@ GEM
       rack
     rails-observers (0.1.2)
       activemodel (~> 4.0)
+    rake (10.1.1)
     shopify_api (3.2.1)
       activeresource (>= 3.0.0)
       thor (>= 0.14.4)
@@ -89,5 +90,6 @@ DEPENDENCIES
   json
   omniauth-shopify-oauth2
   pry
+  rake
   shopify_api
   sinatra
