@@ -7,12 +7,16 @@ class ShopifyApp < Sinatra::Base
   enable :sessions
   enable :inline_templates
 
+  API_KEY = ENV['SHOPIFY_API_KEY']
+  SHARED_SECRET = ENV['SHOPIFY_SHARED_SECRET']
+  SCOPE = 'write_fulfillments'
+
   use OmniAuth::Builder do
     provider :shopify, 
-      ENV['SHOPIFY_API_KEY'], 
-      ENV['SHOPIFY_SHARED_SECRET'],
+      API_KEY,
+      SHARED_SECRET,
 
-      :scope => 'write_fulfillments',
+      :scope => SCOPE,
 
       :setup => lambda { |env| 
         params = Rack::Utils.parse_query(env['QUERY_STRING'])
@@ -21,7 +25,10 @@ class ShopifyApp < Sinatra::Base
       }
   end
 
-  post '/install' do
+  ShopifyAPI::Session.setup({:api_key => API_KEY, 
+                             :secret => SHARED_SECRET})
+
+  post '/login' do
     authenticate
   end
 
@@ -31,12 +38,22 @@ class ShopifyApp < Sinatra::Base
   end
 
   get '/auth/failure' do
-    erb "<h1>Authentication Failed:</h1><h3>message:<h3> <pre>#{params}</pre>"
+    erb "<h1>Authentication Failed:</h1>
+         <h3>message:<h3> <pre>#{params}</pre>"
   end
 
   get '/auth/shopify/callback' do
+    shop = params["shop"]
+    token = request.env['omniauth.auth']['credentials']['token']
+    install(shop, token)
     erb "<h1>#{params[:shopify]}</h1>
          <pre>#{JSON.pretty_generate(request.env['omniauth.auth'])}</pre>"
+  end
+
+  protected
+
+  def install(shop, token)
+    raise NotImplementedError
   end
 
   private
@@ -45,7 +62,7 @@ class ShopifyApp < Sinatra::Base
     if shop_name = sanitize_shop_param(params)
       redirect "/auth/shopify?shop=#{shop_name}"
     else
-      redirect return_address
+      redirect '/'
     end
   end
 

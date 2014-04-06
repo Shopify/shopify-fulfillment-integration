@@ -1,10 +1,11 @@
 require './base'
+require 'byebug'
 
 class SinatraApp < ShopifyApp
 
-  # Home page
+  # Home page => Install Page
   get '/' do
-    erb :install
+    erb :session_new
   end
 
   # /fulfill
@@ -67,6 +68,29 @@ class SinatraApp < ShopifyApp
   after '/fetch*' do
     log << "[#{Time.now}] Response: #{response.status} #{response.body}"
   end
+
+  private
+
+  def install(shop, token)
+    session = ShopifyAPI::Session.new(shop, token)
+    ShopifyAPI::Base.activate_session(session)
+
+    params = YAML.load(File.read("fulfillment_service.yml"))
+
+    fulfillment_service = ShopifyAPI::FulfillmentService.new(params["service"])
+    fulfillment_webhook = ShopifyAPI::Webhook.new(params["webhook"])
+
+    # create the fulfillment service if not present
+    unless ShopifyAPI::FulfillmentService.find(:all).include?(fulfillment_service)
+      fulfillment_service.save
+    end
+
+    # create the webhook if not present
+    unless ShopifyAPI::Webhook.find(:all).include?(fulfillment_webhook)
+      fulfillment_webhook.save
+    end
+  end
+
 end
 
 SinatraApp.run!

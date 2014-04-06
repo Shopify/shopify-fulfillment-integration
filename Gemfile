@@ -4,6 +4,7 @@ ruby "2.0.0"
 
 gem 'sinatra'
 gem 'activesupport'
+
 gem 'omniauth-shopify-oauth2'
 gem 'shopify_api'
 gem 'json'

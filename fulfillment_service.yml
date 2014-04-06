@@ -6,3 +6,8 @@ service:
   tracking_support: true
   requires_shipping_method: false
   response_format: "json"
+
+webhook:
+  topic: "fulfillments/create"
+  address: "http://fulfillment-service.herokuapp.com/fulfill.json"
+  format: "json"
