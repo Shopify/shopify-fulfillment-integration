@@ -1,80 +1,10 @@
-require 'bundler/setup'
-Bundler.require
-require 'active_support/all'
+require './base'
 
-class SinatraApp < Sinatra::Base
-  
-  configure do
-    set :sessions, true
-    set :inline_templates, true
-  end
-
-  use OmniAuth::Builder do
-    provider :shopify, 
-      ENV['SHOPIFY_API_KEY'], 
-      ENV['SHOPIFY_SHARED_SECRET'],
-
-      :scope => 'write_fulfillments',
-
-      :setup => lambda { |env| 
-        params = Rack::Utils.parse_query(env['QUERY_STRING'])
-        site_url = "https://#{params['shop']}"
-        env['omniauth.strategy'].options[:client_options][:site] = site_url
-      }
-  end
+class SinatraApp < ShopifyApp
 
   # Home page
   get '/' do
     erb :install
-  end
-
-  # Session
-  post '/install' do
-    authenticate
-  end
-
-  def authenticate
-    if shop_name = sanitize_shop_param(params)
-      redirect "/auth/shopify?shop=#{shop_name}"
-    else
-      redirect return_address
-    end
-  end
-
-  def sanitize_shop_param(params)
-    return unless params[:shop].present?
-    name = params[:shop].to_s.strip
-    name += '.myshopify.com' if !name.include?("myshopify.com") && !name.include?(".")
-    name.gsub!('https://', '').sub('http://', '')
-
-    u = URI("http://#{name}")
-    u.host.ends_with?(".myshopify.com") ? u.host : nil
-  end
-
-  get '/logout' do
-    session[:shopify] = nil
-    redirect '/'
-  end
-
-  get '/auth/failure' do
-    erb "<h1>Authentication Failed:</h1><h3>message:<h3> <pre>#{params}</pre>"
-  end
-
-  get '/auth/shopify/callback' do
-    erb "<h1>#{params[:shopify]}</h1>
-         <pre>#{JSON.pretty_generate(request.env['omniauth.auth'])}</pre>"
-  end
-
-
-
-  # App
-
-  # logs page
-  log = []
-
-  get '/logs' do
-    log = log[0..100] if log.size > 100
-    erb :index, :locals => {:log => log.reverse} 
   end
 
   # /fulfill
@@ -119,6 +49,13 @@ class SinatraApp < Sinatra::Base
       "message" => "Successfully received the tracking numbers",
       "success" => true
     }.to_json
+  end
+
+  # logs page
+  log = []
+  get '/logs' do
+    log = log[0..100] if log.size > 100
+    erb :index, :locals => {:log => log.reverse} 
   end
 
   # Log the request
