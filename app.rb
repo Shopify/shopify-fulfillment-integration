@@ -2,6 +2,7 @@ require './base'
 require 'byebug'
 
 class SinatraApp < ShopifyApp
+  log = []
 
   # Home page => Install Page
   get '/' do
@@ -11,6 +12,7 @@ class SinatraApp < ShopifyApp
   # /fulfill
   # reciever of fulfillments/create webhook
   post '/fulfill.json' do
+    byebug
     log << "[#{Time.now}] Post: #{request.fullpath}"
     status 404
   end
@@ -40,7 +42,7 @@ class SinatraApp < ShopifyApp
   #
   # Example of a Shopify request:
   # http://myapp.com/fetch_tracking_numbers?order_ids[]=1&order_ids[]=2&order_ids[]=3
-  # 
+  #
   get '/fetch_tracking_numbers.json' do
     order_ids = params["order_ids"]
     tracking_numbers = Hash[order_ids.map {|x| [x, "12345"]}]
@@ -53,10 +55,9 @@ class SinatraApp < ShopifyApp
   end
 
   # logs page
-  log = []
   get '/logs' do
     log = log[0..100] if log.size > 100
-    erb :index, :locals => {:log => log.reverse} 
+    erb :index, :locals => {:log => log.reverse}
   end
 
   # Log the request
