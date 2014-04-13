@@ -2,6 +2,7 @@ require './base'
 require 'byebug'
 
 class SinatraApp < ShopifyApp
+  set :port, 5000
   log = []
 
   # Home page => Install Page
@@ -12,9 +13,19 @@ class SinatraApp < ShopifyApp
   # /fulfill
   # reciever of fulfillments/create webhook
   post '/fulfill.json' do
-    byebug
     log << "[#{Time.now}] Post: #{request.fullpath}"
     status 404
+  end
+
+  # test products
+  get '/products.json' do
+    products = []
+    shopify_session do 
+      products = ShopifyAPI::Product.find(:all)
+    end
+
+    content_type :json
+    products.to_json
   end
 
   # /fetch_stock
@@ -72,23 +83,22 @@ class SinatraApp < ShopifyApp
 
   private
 
-  def install(shop, token)
-    session = ShopifyAPI::Session.new(shop, token)
-    ShopifyAPI::Base.activate_session(session)
+  def install
+    shopify_session do
+      params = YAML.load(File.read("fulfillment_service.yml"))
 
-    params = YAML.load(File.read("fulfillment_service.yml"))
+      fulfillment_service = ShopifyAPI::FulfillmentService.new(params["service"])
+      fulfillment_webhook = ShopifyAPI::Webhook.new(params["webhook"])
 
-    fulfillment_service = ShopifyAPI::FulfillmentService.new(params["service"])
-    fulfillment_webhook = ShopifyAPI::Webhook.new(params["webhook"])
+      # create the fulfillment service if not present
+      unless ShopifyAPI::FulfillmentService.find(:all).include?(fulfillment_service)
+        fulfillment_service.save
+      end
 
-    # create the fulfillment service if not present
-    unless ShopifyAPI::FulfillmentService.find(:all).include?(fulfillment_service)
-      fulfillment_service.save
-    end
-
-    # create the webhook if not present
-    unless ShopifyAPI::Webhook.find(:all).include?(fulfillment_webhook)
-      fulfillment_webhook.save
+      # create the webhook if not present
+      unless ShopifyAPI::Webhook.find(:all).include?(fulfillment_webhook)
+        fulfillment_webhook.save
+      end
     end
   end
 
