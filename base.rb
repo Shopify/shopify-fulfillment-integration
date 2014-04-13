@@ -127,13 +127,12 @@ class ShopifyApp < Sinatra::Base
   end
 
   def verify_shopify_webhook
-    byebug
     data = request.body.read.to_s
     digest = OpenSSL::Digest::Digest.new('sha256')
     calculated_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, SECRET, data)).strip
     request.body.rewind
 
-    calculated_hmac == hmac
+    calculated_hmac == request.env['HTTP_X_SHOPIFY_HMAC_SHA256']
   end
 
   def sanitize_shop_param(params)
