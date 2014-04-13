@@ -1,5 +1,4 @@
 require './base'
-require 'byebug'
 
 class SinatraApp < ShopifyApp
   log = []
