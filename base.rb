@@ -4,6 +4,10 @@ require 'omniauth-shopify-oauth2'
 require 'shopify_api'
 
 class ShopifyApp < Sinatra::Base
+  if Sinatra::Base.development?
+    set :port, 5000
+  end
+  
   enable :inline_templates
 
   API_KEY = ENV['SHOPIFY_API_KEY']

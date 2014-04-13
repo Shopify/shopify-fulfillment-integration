@@ -2,7 +2,6 @@ require './base'
 require 'byebug'
 
 class SinatraApp < ShopifyApp
-  set :port, 5000
   log = []
 
   # Home page => Install Page
