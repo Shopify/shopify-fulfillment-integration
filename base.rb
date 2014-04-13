@@ -4,19 +4,23 @@ require 'omniauth-shopify-oauth2'
 require 'shopify_api'
 
 class ShopifyApp < Sinatra::Base
+  
   if Sinatra::Base.development?
     set :port, 5000
   end
-  
+
   enable :inline_templates
 
   API_KEY = ENV['SHOPIFY_API_KEY']
   SHARED_SECRET = ENV['SHOPIFY_SHARED_SECRET']
+
+  SECRET = 'my_secret'
+
   SCOPE = 'write_fulfillments, write_products'
 
   use Rack::Session::Cookie, :key => 'rack.session',
                              :path => '/',
-                             :secret => 'your_secret'
+                             :secret => SECRET
 
   use OmniAuth::Builder do
     provider :shopify, 
