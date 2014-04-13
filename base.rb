@@ -1,15 +1,17 @@
 require 'sinatra/base'
+require "sinatra/activerecord"
 require 'active_support/all'
 require 'omniauth-shopify-oauth2'
 require 'shopify_api'
 
 class ShopifyApp < Sinatra::Base
+  register Sinatra::ActiveRecordExtension
   
   if Sinatra::Base.development?
     set :port, 5000
   end
 
-  enable :inline_templates
+  set :database_file, "config/database.yml"
 
   API_KEY = ENV['SHOPIFY_API_KEY']
   SHARED_SECRET = ENV['SHOPIFY_SHARED_SECRET']
@@ -42,6 +44,8 @@ class ShopifyApp < Sinatra::Base
   def base_url
     @base_url ||= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
   end
+
+  enable :inline_templates
 
   post '/login' do
     authenticate

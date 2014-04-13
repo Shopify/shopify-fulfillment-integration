@@ -102,5 +102,3 @@ class SinatraApp < ShopifyApp
   end
 
 end
-
-SinatraApp.run!

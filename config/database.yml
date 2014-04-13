@@ -1,0 +1,4 @@
+development:
+  adapter: sqlite3
+  database: db/shopify_app.sqlite3
+  pool: 5

@@ -3,18 +3,21 @@ ruby "2.0.0"
 
 
 gem 'sinatra'
+gem 'sinatra-activerecord'
 gem 'activesupport'
+gem 'foreman'
+gem 'rake'
 
 gem 'omniauth-shopify-oauth2'
 gem 'shopify_api'
 gem 'json'
 
-gem 'rake'
-gem 'foreman'
+group :production do
+  gem 'pg'
+end
 
-# for installer
-gem 'highline'
-
-# development
-gem 'pry'
-gem 'byebug'
+group :development do
+  gem 'sqlite3'
+  gem 'pry' 
+  gem 'byebug'
+end

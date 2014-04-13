@@ -1,13 +1,14 @@
-task :server do
-  `foreman start`
-end
+require "sinatra/activerecord/rake"
+require "./app"
 
-task :dev_server do
+task :server do
   api_key = `sed -n '1p' .env`
   secret = `sed -n '2p' .env`
 
   `export SHOPIFY_API_KEY=#{api_key}`
   `export SHOPIFY_SHARED_SECRET=#{secret}`
+
+  SinatraApp.run!
 end
 
 task :creds2heroku do
