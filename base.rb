@@ -4,14 +4,17 @@ require 'active_support/all'
 require 'omniauth-shopify-oauth2'
 require 'shopify_api'
 
+class Shop < ActiveRecord::Base
+  validates_presence_of :shop, :token
+end
+
 class ShopifyApp < Sinatra::Base
   register Sinatra::ActiveRecordExtension
-  
+  set :database_file, "config/database.yml"
+
   if Sinatra::Base.development?
     set :port, 5000
   end
-
-  set :database_file, "config/database.yml"
 
   API_KEY = ENV['SHOPIFY_API_KEY']
   SHARED_SECRET = ENV['SHOPIFY_SHARED_SECRET']
@@ -62,16 +65,20 @@ class ShopifyApp < Sinatra::Base
   end
 
   get '/auth/shopify/callback' do
-    shop = params["shop"]
+    shop_name = params["shop"]
     token = request.env['omniauth.auth']['credentials']['token']
 
     session[:shopify] ||= {}
-    session[:shopify][:shop] = shop
+    session[:shopify][:shop] = shop_name
     session[:shopify][:token] = token
 
     redirect_uri = env['omniauth.params']["redirect_uri"]
 
-    install
+    shop = Shop.where(:shop => shop_name)
+    if shop.blank?
+      Shop.create(:shop => shop_name, :token => token)
+      install
+    end
 
     redirect redirect_uri
   end
@@ -93,6 +100,18 @@ class ShopifyApp < Sinatra::Base
     yield
   end
 
+  def webhook_session(&blk)
+    if verify_shopify_webhook
+      shop_name = sanitize_shop_param(params)
+      shop = Shop.where(:shop => shop_name).first
+
+      api_session = ShopifyAPI::Session.new(shop_name, shop.token)
+      ShopifyAPI::Base.activate_session(api_session)
+
+      yield
+    end
+  end
+
   def install(shop, token)
     raise NotImplementedError
   end
@@ -105,6 +124,16 @@ class ShopifyApp < Sinatra::Base
     else
       redirect '/'
     end
+  end
+
+  def verify_shopify_webhook
+    byebug
+    data = request.body.read.to_s
+    digest = OpenSSL::Digest::Digest.new('sha256')
+    calculated_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, SECRET, data)).strip
+    request.body.rewind
+
+    calculated_hmac == hmac
   end
 
   def sanitize_shop_param(params)

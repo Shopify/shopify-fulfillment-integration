@@ -13,7 +13,15 @@ class SinatraApp < ShopifyApp
   # reciever of fulfillments/create webhook
   post '/fulfill.json' do
     log << "[#{Time.now}] Post: #{request.fullpath}"
-    status 404
+    
+    webhook_session do
+      return status 200 unless params["fulfillment_service"] == "my-fulfillment-service"
+      order_id = params["order_id"]
+      fulfillment_id = params["id"]
+      fulfillment = ShopifyAPI::Fulfillment.find(fulfillment_id, :params => {:order_id => order_id})
+      fulfillment.complete
+      status 200
+    end
   end
 
   # test products
