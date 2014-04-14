@@ -10,11 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140413221328) do
+ActiveRecord::Schema.define(version: 20140414042317) do
 
   create_table "shops", force: true do |t|
     t.string "shop"
     t.string "token"
   end
+
+  add_index "shops", ["shop"], name: "index_shops_on_shop"
 
 end
