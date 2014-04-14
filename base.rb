@@ -21,7 +21,7 @@ class ShopifyApp < Sinatra::Base
 
   SECRET = 'my_secret'
 
-  SCOPE = 'write_fulfillments, write_products'
+  SCOPE = 'write_fulfillments, write_orders, write_products'
 
   use Rack::Session::Cookie, :key => 'rack.session',
                              :path => '/',
@@ -102,13 +102,13 @@ class ShopifyApp < Sinatra::Base
 
   def webhook_session(&blk)
     if verify_shopify_webhook
-      shop_name = sanitize_shop_param(params)
+      shop_name = request.env['HTTP_X_SHOPIFY_SHOP_DOMAIN']
       shop = Shop.where(:shop => shop_name).first
-
-      api_session = ShopifyAPI::Session.new(shop_name, shop.token)
-      ShopifyAPI::Base.activate_session(api_session)
-
-      yield
+      if shop.present?
+        api_session = ShopifyAPI::Session.new(shop_name, shop.token)
+        ShopifyAPI::Base.activate_session(api_session)
+        yield
+      end
     end
   end
 
@@ -129,7 +129,7 @@ class ShopifyApp < Sinatra::Base
   def verify_shopify_webhook
     data = request.body.read.to_s
     digest = OpenSSL::Digest::Digest.new('sha256')
-    calculated_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, SECRET, data)).strip
+    calculated_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, SHARED_SECRET, data)).strip
     request.body.rewind
 
     calculated_hmac == request.env['HTTP_X_SHOPIFY_HMAC_SHA256']

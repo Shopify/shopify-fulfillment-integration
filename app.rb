@@ -1,5 +1,9 @@
 require './base'
 
+if Sinatra::Base.development?
+  require 'byebug'
+end
+
 class SinatraApp < ShopifyApp
   log = []
 
@@ -14,7 +18,12 @@ class SinatraApp < ShopifyApp
     log << "[#{Time.now}] Post: #{request.fullpath}"
     
     webhook_session do
-      return status 200 unless params["fulfillment_service"] == "my-fulfillment-service"
+      params = ActiveSupport::JSON.decode(request.body.read.to_s)
+      # you can also see the service for individual line items
+      # what is the status if there is multiple services?
+      # I think I am being lazy here - which may also be why I needed
+      # order write permissions to make the find and complete call down below
+      return status 200 unless params["service"] == "my-fulfillment-service"
       order_id = params["order_id"]
       fulfillment_id = params["id"]
       fulfillment = ShopifyAPI::Fulfillment.find(fulfillment_id, :params => {:order_id => order_id})
@@ -23,7 +32,8 @@ class SinatraApp < ShopifyApp
     end
   end
 
-  # test products
+  # test shopify_session by
+  # requesting all the products
   get '/products.json' do
     products = []
     shopify_session do 

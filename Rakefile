@@ -5,10 +5,15 @@ task :server do
   api_key = `sed -n '1p' .env`
   secret = `sed -n '2p' .env`
 
-  `export SHOPIFY_API_KEY=#{api_key}`
-  `export SHOPIFY_SHARED_SECRET=#{secret}`
-
+  ENV[api_key.split('=').first] = api_key.split('=').last.strip
+  ENV[secret.split('=').first] = secret.split('=').last.strip
+  # need to re load the class here somehow
+  # or maybe set the API_KEY var directly ...
   SinatraApp.run!
+end
+
+task :clear_shops do
+  Shop.delete_all
 end
 
 task :creds2heroku do
