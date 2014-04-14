@@ -12,16 +12,17 @@ class ShopifyApp < Sinatra::Base
   register Sinatra::ActiveRecordExtension
   set :database_file, "config/database.yml"
 
-  if Sinatra::Base.development?
-    set :port, 5000
-  end
-
-  API_KEY = ENV['SHOPIFY_API_KEY']
-  SHARED_SECRET = ENV['SHOPIFY_SHARED_SECRET']
-
-  SECRET = 'my_secret'
-
   SCOPE = 'write_fulfillments, write_orders, write_products'
+
+  if Sinatra::Base.production?
+    API_KEY = ENV['SHOPIFY_API_KEY']
+    SHARED_SECRET = ENV['SHOPIFY_SHARED_SECRET']
+    SECRET = 'my_secret'
+  else
+    API_KEY = `sed -n '1p' .env`.split('=').last.strip
+    SHARED_SECRET = `sed -n '2p' .env`.last.strip
+    SECRET = `sed -n '3p' .env`.last.strip
+  end
 
   use Rack::Session::Cookie, :key => 'rack.session',
                              :path => '/',
