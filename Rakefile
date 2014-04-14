@@ -5,6 +5,13 @@ task :server do
   SinatraApp.run!
 end
 
+task :deploy do
+  pipe = IO.popen("git push heroku master")
+  while (line = pipe.gets)
+    print line
+  end
+end
+
 task :clear_shops do
   Shop.delete_all
 end
