@@ -5,7 +5,6 @@ if Sinatra::Base.development?
 end
 
 class SinatraApp < ShopifyApp
-  log = []
 
   # Home page => Install Page
   get '/' do
@@ -15,8 +14,6 @@ class SinatraApp < ShopifyApp
   # /fulfill
   # reciever of fulfillments/create webhook
   post '/fulfill.json' do
-    log << "[#{Time.now}] Post: #{request.fullpath}"
-    
     webhook_session do
       params = ActiveSupport::JSON.decode(request.body.read.to_s)
       # you can also see the service for individual line items
@@ -36,7 +33,7 @@ class SinatraApp < ShopifyApp
   # requesting all the products
   get '/products.json' do
     products = []
-    shopify_session do 
+    shopify_session do
       products = ShopifyAPI::Product.find(:all)
     end
 
@@ -79,22 +76,6 @@ class SinatraApp < ShopifyApp
       "message" => "Successfully received the tracking numbers",
       "success" => true
     }.to_json
-  end
-
-  # logs page
-  get '/logs' do
-    log = log[0..100] if log.size > 100
-    erb :index, :locals => {:log => log.reverse}
-  end
-
-  # Log the request
-  before '/fetch*' do
-    log << "[#{Time.now}] Request: #{request.fullpath}"
-  end
-
-  # Log the response
-  after '/fetch*' do
-    log << "[#{Time.now}] Response: #{response.status} #{response.body}"
   end
 
   private
