@@ -10,15 +10,24 @@ class FulfillmentService < ActiveRecord::Base
   validates :shop, uniqueness: true
   before_save :check_credentials
 
-  def service
-    @service = ActiveMerchant::Fulfillment::ShipwireService.new(
+  def fetch_stock_levels(options={})
+    instance.fetch_stock_levels(options)
+  end
+
+  def fetch_tracking_numbers(order_ids)
+    instance.fetch_tracking_numbers(order_ids)
+  end
+
+  def instance
+    @instance = ActiveMerchant::Fulfillment::ShipwireService.new(
       :login => username,
-      :password => password
+      :password => password,
+      :test => true
     )
   end
 
   def check_credentials
-    unless service.valid_credentials?
+    unless instance.valid_credentials?
       errors.add(:password, "Must have valid shipwire credentials to use the services provided by this app.")
       return false
     end

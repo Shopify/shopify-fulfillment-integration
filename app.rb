@@ -15,8 +15,7 @@ class SinatraApp < ShopifyApp
   # /fulfill
   # reciever of fulfillments/create webhook
   post '/fulfill.json' do
-    webhook_session do
-      params = ActiveSupport::JSON.decode(request.body.read.to_s)
+    webhook_session do |params|
       # you can also see the service for individual line items
       # what is the status if there is multiple services?
       # I think I am being lazy here - which may also be why I needed
@@ -30,18 +29,6 @@ class SinatraApp < ShopifyApp
     end
   end
 
-  # test shopify_session by
-  # requesting all the products
-  get '/products.json' do
-    products = []
-    shopify_session do
-      products = ShopifyAPI::Product.find(:all)
-    end
-
-    content_type :json
-    products.to_json
-  end
-
   # /fetch_stock
   # Listen for a request from Shopify
   # When a request is recieved make a request to fulfillment service
@@ -52,11 +39,14 @@ class SinatraApp < ShopifyApp
   # https://myapp.com/fetch_stock?sku=123&shop=testshop.myshopify.com
   #
   get '/fetch_stock.json' do
-    sku = params["sku"]
-    shop = params["shop"]
+    fulfillment_session do |service|
+      sku = params["sku"]
+      response = service.fetch_stock_levels(sku: sku)
+      stock_levels = response.stock_levels
 
-    content_type :json
-    { sku => 11 }.to_json
+      content_type :json
+      stock_levels.to_json
+    end
   end
 
   # /fetch_tracking_numbers
@@ -69,16 +59,17 @@ class SinatraApp < ShopifyApp
   # http://myapp.com/fetch_tracking_numbers?order_ids[]=1&order_ids[]=2&order_ids[]=3
   #
   get '/fetch_tracking_numbers.json' do
-    order_ids = params["order_ids"]
-    tracking_numbers = Hash[order_ids.map {|x| [x, "12345"]}]
+    fulfillment_session do |service|
+      order_ids = params["order_ids"]
+      response = service.fetch_tracking_numbers(order_ids)
+      tracking_numbers = response.tracking_numbers
 
-    content_type :json
-    { "tracking_numbers" => tracking_numbers,
-      "message" => "Successfully received the tracking numbers",
-      "success" => true
-    }.to_json
+      content_type :json
+      tracking_numbers.to_json
+    end
   end
 
+  # form for fulfillment service objects
   get '/fulfillment_service/new' do
     erb :fulfillment_service_new
   end
@@ -118,6 +109,18 @@ class SinatraApp < ShopifyApp
       # create the webhook if not present
       unless ShopifyAPI::Webhook.find(:all).include?(fulfillment_webhook)
         fulfillment_webhook.save
+      end
+    end
+    redirect '/fulfillment_service/new'
+  end
+
+  def fulfillment_session(&blk)
+    shop_name = params["shop"]
+    shop = Shop.where(:shop => shop_name).first
+    if shop.present?
+      service = FulfillmentService.where(shop_id: shop.id).first
+      if service.present?
+        yield service
       end
     end
   end

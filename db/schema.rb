@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140416003950) do
+ActiveRecord::Schema.define(version: 20140416023300) do
 
   create_table "fulfillment_services", force: true do |t|
     t.integer "shop_id"
     t.string  "username_encrypted"
     t.string  "password_encrypted"
   end
+
+  add_index "fulfillment_services", ["shop_id"], name: "index_fulfillment_services_on_shop_id"
 
   create_table "shops", force: true do |t|
     t.string "shop"

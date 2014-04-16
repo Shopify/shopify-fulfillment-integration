@@ -106,9 +106,10 @@ class ShopifyApp < Sinatra::Base
       shop_name = request.env['HTTP_X_SHOPIFY_SHOP_DOMAIN']
       shop = Shop.where(:shop => shop_name).first
       if shop.present?
+        params = ActiveSupport::JSON.decode(request.body.read.to_s)
         api_session = ShopifyAPI::Session.new(shop_name, shop.token)
         ShopifyAPI::Base.activate_session(api_session)
-        yield
+        yield params
       end
     end
   end
