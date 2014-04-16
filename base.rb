@@ -52,11 +52,11 @@ class ShopifyApp < Sinatra::Base
   enable :inline_templates
 
   get '/install' do
-    erb :session_new
+    erb :install
   end
 
-  get 'login' do
-    erb :session_new
+  get '/login' do
+    erb :login
   end
 
   post '/login' do
