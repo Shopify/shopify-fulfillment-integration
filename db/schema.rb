@@ -10,7 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140414042317) do
+ActiveRecord::Schema.define(version: 20140416003950) do
+
+  create_table "fulfillment_services", force: true do |t|
+    t.integer "shop_id"
+    t.string  "username_encrypted"
+    t.string  "password_encrypted"
+  end
 
   create_table "shops", force: true do |t|
     t.string "shop"

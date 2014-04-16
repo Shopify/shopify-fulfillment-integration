@@ -16,6 +16,10 @@ task :clear_shops do
   Shop.delete_all
 end
 
+task :clear_services do
+  FulfillmentService.delete_all
+end
+
 task :creds2heroku do
   Bundler.with_clean_env {
     api_key = `sed -n '1p' .env`

@@ -1,4 +1,5 @@
 require './base'
+require './fulfillment_service'
 
 if Sinatra::Base.development?
   require 'byebug'
@@ -76,6 +77,28 @@ class SinatraApp < ShopifyApp
       "message" => "Successfully received the tracking numbers",
       "success" => true
     }.to_json
+  end
+
+  get '/fulfillment_service/new' do
+    erb :fulfillment_service_new
+  end
+
+  post '/fulfillment_service' do
+    shopify_session do
+      shop_name = session[:shopify][:shop]
+      shop = Shop.where(:shop => shop_name).first
+      params.merge!(shop: shop)
+      service = FulfillmentService.new(params)
+      if service.save
+        redirect '/fulfillment_service'
+      else
+        redirect '/fulfillment_service/new'
+      end
+    end
+  end
+
+  get '/fulfillment_service' do
+    erb "<h1>Credentials Saved</h1>"
   end
 
   private
