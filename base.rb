@@ -20,8 +20,8 @@ class ShopifyApp < Sinatra::Base
     SECRET = 'my_secret'
   else
     API_KEY = `sed -n '1p' .env`.split('=').last.strip
-    SHARED_SECRET = `sed -n '2p' .env`.last.strip
-    SECRET = `sed -n '3p' .env`.last.strip
+    SHARED_SECRET = `sed -n '2p' .env`.split('=').last.strip
+    SECRET = `sed -n '3p' .env`.split('=').last.strip
   end
 
   use Rack::Session::Cookie, :key => 'rack.session',
@@ -29,20 +29,20 @@ class ShopifyApp < Sinatra::Base
                              :secret => SECRET
 
   use OmniAuth::Builder do
-    provider :shopify, 
+    provider :shopify,
       API_KEY,
       SHARED_SECRET,
 
       :scope => SCOPE,
 
-      :setup => lambda { |env| 
+      :setup => lambda { |env|
         params = Rack::Utils.parse_query(env['QUERY_STRING'])
         site_url = "https://#{params['shop']}"
         env['omniauth.strategy'].options[:client_options][:site] = site_url
       }
   end
 
-  ShopifyAPI::Session.setup({:api_key => API_KEY, 
+  ShopifyAPI::Session.setup({:api_key => API_KEY,
                              :secret => SHARED_SECRET})
 
   def base_url
