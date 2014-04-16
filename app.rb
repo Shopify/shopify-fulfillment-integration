@@ -7,9 +7,9 @@ end
 
 class SinatraApp < ShopifyApp
 
-  # Home page => Install Page
+  # Home page
   get '/' do
-    erb :session_new
+    erb :home
   end
 
   # /fulfill
@@ -81,15 +81,11 @@ class SinatraApp < ShopifyApp
       params.merge!(shop: shop)
       service = FulfillmentService.new(params)
       if service.save
-        redirect '/fulfillment_service'
+        redirect '/'
       else
         redirect '/fulfillment_service/new'
       end
     end
-  end
-
-  get '/fulfillment_service' do
-    erb "<h1>Credentials Saved</h1>"
   end
 
   private

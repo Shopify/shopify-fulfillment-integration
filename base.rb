@@ -24,7 +24,7 @@ class ShopifyApp < Sinatra::Base
     SECRET = `sed -n '3p' .env`.split('=').last.strip
   end
 
-  use Rack::Session::Cookie, :key => 'rack.session',
+  use Rack::Session::Cookie, :key => 'fulfillment-service.herokuapp.session',
                              :path => '/',
                              :secret => SECRET
 
@@ -50,6 +50,14 @@ class ShopifyApp < Sinatra::Base
   end
 
   enable :inline_templates
+
+  get '/install' do
+    erb :session_new
+  end
+
+  get 'login' do
+    erb :session_new
+  end
 
   post '/login' do
     authenticate
@@ -85,6 +93,10 @@ class ShopifyApp < Sinatra::Base
   end
 
   protected
+
+  def current_shop
+    session[:shopify][:shop] if session.has_key?(:shopify)
+  end
 
   def shopify_session(&blk)
     if !session.has_key?(:shopify)
