@@ -15,7 +15,7 @@ class SinatraApp < ShopifyApp
   # /fulfill
   # reciever of fulfillments/create webhook
   post '/fulfill.json' do
-    webhook_session do |params|
+    webhook_session do |shop, params|
       # you can also see the service for individual line items
       # what is the status if there is multiple services?
       # I think I am being lazy here - which may also be why I needed
@@ -95,19 +95,34 @@ class SinatraApp < ShopifyApp
       params = YAML.load(File.read("config/fulfillment_service.yml"))
 
       fulfillment_service = ShopifyAPI::FulfillmentService.new(params["service"])
-      fulfillment_webhook = ShopifyAPI::Webhook.new(params["webhook"])
+      fulfillment_webhook = ShopifyAPI::Webhook.new(params["fulfillment_webhook"])
+      uninstall_webhook = ShopifyAPI::Webhook.new(params["uninstall_webhook"])
 
       # create the fulfillment service if not present
       unless ShopifyAPI::FulfillmentService.find(:all).include?(fulfillment_service)
         fulfillment_service.save
       end
 
-      # create the webhook if not present
+      # create the fulfillment webhook if not present
       unless ShopifyAPI::Webhook.find(:all).include?(fulfillment_webhook)
         fulfillment_webhook.save
       end
+
+      # create the uninstall webhook if not present
+      unless ShopifyAPI::Webhook.find(:all).include?(uninstall_webhook)
+        uninstall_webhook.save
+      end
     end
     redirect '/fulfillment_service/new'
+  end
+
+  def uninstall
+    webhook_session do |shop, params|
+      # remove any dependent models
+      service = FulfillmentService.where(shop_id: shop.id).destroy_all
+      # remove shop model
+      shop.destroy
+    end
   end
 
   def fulfillment_session(&blk)

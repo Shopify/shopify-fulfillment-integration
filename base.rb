@@ -92,6 +92,11 @@ class ShopifyApp < Sinatra::Base
     redirect redirect_uri
   end
 
+  # endpoint for the app/uninstall webhook
+  post 'uninstall.json' do
+    uninstall
+  end
+
   protected
 
   def current_shop
@@ -121,12 +126,16 @@ class ShopifyApp < Sinatra::Base
         params = ActiveSupport::JSON.decode(request.body.read.to_s)
         api_session = ShopifyAPI::Session.new(shop_name, shop.token)
         ShopifyAPI::Base.activate_session(api_session)
-        yield params
+        yield shop, params
       end
     end
   end
 
-  def install(shop, token)
+  def install
+    raise NotImplementedError
+  end
+
+  def uninstall
     raise NotImplementedError
   end
 

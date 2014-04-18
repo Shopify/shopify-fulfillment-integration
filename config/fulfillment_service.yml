@@ -7,7 +7,12 @@ service:
   requires_shipping_method: false
   response_format: "json"
 
-webhook:
+fulfillment_webhook:
   topic: "fulfillments/create"
   address: "http://fulfillment-service.herokuapp.com/fulfill.json"
+  format: "json"
+
+uninstall_webhook:
+  topic: "app/uninstall"
+  address: "http://fulfillment-service.herokuapp.com/uninstall.json"
   format: "json"
