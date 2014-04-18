@@ -12,6 +12,11 @@ task :deploy do
   end
 end
 
+task :clear do
+  Rake::Task["clear_shops"].execute
+  Rake::Task["clear_services"].execute
+end
+
 task :clear_shops do
   Shop.delete_all
 end
