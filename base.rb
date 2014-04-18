@@ -5,12 +5,6 @@ require 'attr_encrypted'
 require 'omniauth-shopify-oauth2'
 require 'shopify_api'
 
-class Shop < ActiveRecord::Base
-  # this needs a migration first
-  #attr_encrypted :token, :key => ShopifyApp::SECRET, :attribute => 'token_encrypted'
-  validates_presence_of :shop, :token
-end
-
 class ShopifyApp < Sinatra::Base
   register Sinatra::ActiveRecordExtension
   set :database_file, "config/database.yml"
@@ -171,4 +165,9 @@ class ShopifyApp < Sinatra::Base
     u = URI("http://#{name}")
     u.host.ends_with?(".myshopify.com") ? u.host : nil
   end
+end
+
+class Shop < ActiveRecord::Base
+  attr_encrypted :token, :key => ShopifyApp::SECRET, :attribute => 'token_encrypted'
+  validates_presence_of :shop, :token
 end
