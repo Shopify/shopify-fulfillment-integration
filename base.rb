@@ -1,10 +1,13 @@
 require 'sinatra/base'
 require "sinatra/activerecord"
 require 'active_support/all'
+require 'attr_encrypted'
 require 'omniauth-shopify-oauth2'
 require 'shopify_api'
 
 class Shop < ActiveRecord::Base
+  # this needs a migration first
+  #attr_encrypted :token, :key => ShopifyApp::SECRET, :attribute => 'token_encrypted'
   validates_presence_of :shop, :token
 end
 
@@ -17,14 +20,14 @@ class ShopifyApp < Sinatra::Base
   if Sinatra::Base.production?
     API_KEY = ENV['SHOPIFY_API_KEY']
     SHARED_SECRET = ENV['SHOPIFY_SHARED_SECRET']
-    SECRET = 'my_secret'
+    SECRET = ENV['SECRET']
   else
     API_KEY = `sed -n '1p' .env`.split('=').last.strip
     SHARED_SECRET = `sed -n '2p' .env`.split('=').last.strip
     SECRET = `sed -n '3p' .env`.split('=').last.strip
   end
 
-  use Rack::Session::Cookie, :key => 'fulfillment-service.herokuapp.session',
+  use Rack::Session::Cookie, :key => '#{base_url}.session',
                              :path => '/',
                              :secret => SECRET
 
@@ -121,7 +124,7 @@ class ShopifyApp < Sinatra::Base
   def webhook_session(&blk)
     if verify_shopify_webhook
       shop_name = request.env['HTTP_X_SHOPIFY_SHOP_DOMAIN']
-      shop = Shop.where(:shop => shop_name).first
+      shop = Shop.find_by(:shop => shop_name)
       if shop.present?
         params = ActiveSupport::JSON.decode(request.body.read.to_s)
         api_session = ShopifyAPI::Session.new(shop_name, shop.token)

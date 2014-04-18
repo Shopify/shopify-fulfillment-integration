@@ -14,17 +14,25 @@ class SinatraApp < ShopifyApp
 
   # /fulfill
   # reciever of fulfillments/create webhook
+  # if the fulfillment uses this service then
+  # acquire and parse the data we need to forward
+  # the request to the fulfillment service. Send the request
+  # to the other service and respond to Shopify completing the
+  # fulfillment.
+  #
   post '/fulfill.json' do
     webhook_session do |shop, params|
-      # you can also see the service for individual line items
-      # what is the status if there is multiple services?
-      # I think I am being lazy here - which may also be why I needed
-      # order write permissions to make the find and complete call down below
-      return status 200 unless params["service"] == FulfillmentService.name
-      order_id = params["order_id"]
-      fulfillment_id = params["id"]
-      fulfillment = ShopifyAPI::Fulfillment.find(fulfillment_id, :params => {:order_id => order_id})
-      fulfillment.complete
+      return status 200 unless params["service"] == FulfillmentService.service_name
+
+      order = ShopifyAPI::Order.find(params["order_id"])
+      fulfillment = ShopifyAPI::Fulfillment.find(params["id"], :params => {:order_id => params["order_id"]})
+
+      service = FulfillmentService.find_by(shop_id: shop.id)
+
+      if service.fulfill(order, fulfillment)
+        fulfillment.complete
+      end
+
       status 200
     end
   end
@@ -129,7 +137,7 @@ class SinatraApp < ShopifyApp
     shop_name = params["shop"]
     shop = Shop.where(:shop => shop_name).first
     if shop.present?
-      service = FulfillmentService.where(shop_id: shop.id).first
+      service = FulfillmentService.find_by(shop_id: shop.id)
       if service.present?
         yield service
       end
