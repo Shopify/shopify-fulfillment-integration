@@ -1,3 +1,4 @@
 *.env
 *.sqlite3
 *.sublime*
+ngrok
