@@ -3,8 +3,8 @@ scope: 'write_fulfillments, write_orders, write_products'
 service:
   name: "my-fulfillment-service"
   handle: "my-fulfillment-service"
-  #callback_url: "http://fulfillment-service.herokuapp.com"
-  callback_url: "http://2bd6aeb2.ngrok.com"
+  callback_url: "http://fulfillment-service.herokuapp.com"
+  #callback_url: "http://2bd6aeb2.ngrok.com"
   inventory_management: true
   tracking_support: true
   requires_shipping_method: false
@@ -12,12 +12,12 @@ service:
 
 fulfillment_webhook:
   topic: "fulfillments/create"
-  #address: "http://fulfillment-service.herokuapp.com/fulfill.json"
-  address:  "http://2bd6aeb2.ngrok.com/fulfill.json"
+  address: "http://fulfillment-service.herokuapp.com/fulfill.json"
+  #address:  "http://2bd6aeb2.ngrok.com/fulfill.json"
   format: "json"
 
 uninstall_webhook:
-  topic: "app/uninstall"
-  #address: "http://fulfillment-service.herokuapp.com/uninstall.json"
-  address:  "http://2bd6aeb2.ngrok.com/uninstall.json"
+  topic: "app/uninstalled"
+  address: "http://fulfillment-service.herokuapp.com/uninstall.json"
+  #address:  "http://2bd6aeb2.ngrok.com/uninstall.json"
   format: "json"
