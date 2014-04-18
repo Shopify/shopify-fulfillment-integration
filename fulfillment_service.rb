@@ -10,6 +10,10 @@ class FulfillmentService < ActiveRecord::Base
   validates :shop, uniqueness: true
   before_save :check_credentials
 
+  def self.name
+    @name ||= YAML.load(File.read("config/fulfillment_service.yml"))["service"]["name"]
+  end
+
   def fetch_stock_levels(options={})
     instance.fetch_stock_levels(options)
   end

@@ -20,7 +20,7 @@ class SinatraApp < ShopifyApp
       # what is the status if there is multiple services?
       # I think I am being lazy here - which may also be why I needed
       # order write permissions to make the find and complete call down below
-      return status 200 unless params["service"] == "my-fulfillment-service"
+      return status 200 unless params["service"] == FulfillmentService.name
       order_id = params["order_id"]
       fulfillment_id = params["id"]
       fulfillment = ShopifyAPI::Fulfillment.find(fulfillment_id, :params => {:order_id => order_id})
