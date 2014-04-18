@@ -9,7 +9,7 @@ class ShopifyApp < Sinatra::Base
   register Sinatra::ActiveRecordExtension
   set :database_file, "config/database.yml"
 
-  SCOPE = 'write_fulfillments, write_orders, write_products'
+  SCOPE = YAML.load(File.read("config/app.yml"))["scope"]
 
   if Sinatra::Base.production?
     API_KEY = ENV['SHOPIFY_API_KEY']

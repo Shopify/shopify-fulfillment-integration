@@ -100,7 +100,7 @@ class SinatraApp < ShopifyApp
 
   def install
     shopify_session do
-      params = YAML.load(File.read("config/fulfillment_service.yml"))
+      params = YAML.load(File.read("config/app.yml"))
 
       fulfillment_service = ShopifyAPI::FulfillmentService.new(params["service"])
       fulfillment_webhook = ShopifyAPI::Webhook.new(params["fulfillment_webhook"])

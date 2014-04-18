@@ -11,7 +11,7 @@ class FulfillmentService < ActiveRecord::Base
   before_save :check_credentials
 
   def self.service_name
-    @name ||= YAML.load(File.read("config/fulfillment_service.yml"))["service"]["name"]
+    @name ||= YAML.load(File.read("config/app.yml"))["service"]["name"]
   end
 
   def fulfill(order, fulfillment)
