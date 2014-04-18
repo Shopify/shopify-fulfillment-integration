@@ -1,5 +1,6 @@
 require './base'
 require './fulfillment_service'
+require './fulfillment_service_routes'
 
 if Sinatra::Base.development?
   require 'byebug'
@@ -77,25 +78,6 @@ class SinatraApp < ShopifyApp
     end
   end
 
-  # form for fulfillment service objects
-  get '/fulfillment_service/new' do
-    erb :fulfillment_service_new
-  end
-
-  post '/fulfillment_service' do
-    shopify_session do
-      shop_name = session[:shopify][:shop]
-      shop = Shop.where(:shop => shop_name).first
-      params.merge!(shop: shop)
-      service = FulfillmentService.new(params)
-      if service.save
-        redirect '/'
-      else
-        redirect '/fulfillment_service/new'
-      end
-    end
-  end
-
   private
 
   def install
@@ -135,7 +117,7 @@ class SinatraApp < ShopifyApp
 
   def fulfillment_session(&blk)
     shop_name = params["shop"]
-    shop = Shop.where(:shop => shop_name).first
+    shop = Shop.find_by(:shop => shop_name)
     if shop.present?
       service = FulfillmentService.find_by(shop_id: shop.id)
       if service.present?

@@ -21,9 +21,11 @@ class ShopifyApp < Sinatra::Base
     SECRET = `sed -n '3p' .env`.split('=').last.strip
   end
 
-  use Rack::Session::Cookie, :key => '#{base_url}.session',
-                             :path => '/',
-                             :secret => SECRET
+  use Rack::MethodOverride
+  use Rack::Session::Pool, :key => '#{base_url}.session',
+                               :path => '/',
+                               :secret => SECRET,
+                               :expire_after => 2592000
 
   use OmniAuth::Builder do
     provider :shopify,
