@@ -27,8 +27,12 @@ class SinatraApp < ShopifyApp
       shop = Shop.find_by(:shop => shop_name)
       service = FulfillmentService.find_by(shop_id: shop.id)
 
-      @username = service.username
-      erb :fulfillment_service_edit
+      if service.present?
+        @username = service.username
+        erb :fulfillment_service_edit
+      else
+        redirect '/fulfillment_service/new'
+      end
     end
   end
 
@@ -39,9 +43,9 @@ class SinatraApp < ShopifyApp
       service = FulfillmentService.find_by(shop_id: shop.id)
 
       if service.update_attributes(service_params(params))
-        redirect '/'
+        flash[:notice] = "Credentials Updated"
       else
-        redirect '/fulfillment_service/edit'
+        flash[:error] = "Error Saving Credentials"
       end
     end
   end

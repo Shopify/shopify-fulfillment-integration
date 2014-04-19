@@ -1,0 +1,10 @@
+<!--
+  As we are inside an iframe, redirecting the iframe to the OAuth page will
+  brake it. Se we need to ask the parent to do the redirect.
+
+  This redirect can't be done on server side, or the browser will block the
+  OAuth page to be rendered. You need to do a full page redirect.
+-->
+<script type="text/javascript">
+  window.top.location.href = "<%= @redirect_url %>";
+</script>

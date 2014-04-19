@@ -1,8 +1,10 @@
+<%= erb :"_top_bar", :layout => false %>
+
 <h1>Shopify Fulfillment Service Integration App</h1>
 
 <% if current_shop %>
   <p><%= current_shop %></p>
-  <a href="/fulfillment_service/edit">Settings</a>
+  <a href="fulfillment_service/edit">Settings</a>
 <% else %>
-  <a href="install">Install</a>
+  <a href="login">login</a>
 <% end %>

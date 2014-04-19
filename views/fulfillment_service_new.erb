@@ -1,7 +1,37 @@
+<script type="text/javascript">
+  window.mainPageTitle = 'Shipwire Credentials';
+
+  ShopifyApp.ready(function(){
+    ShopifyApp.Bar.initialize({
+      title: window.mainPageTitle,
+      icon: 'https://fulfillment-service.herokuapp.com/icon.png',
+      buttons: {
+        primary: {
+          label: "Save",
+          message: 'save-credentials-form-message'
+        },
+        secondary: {
+          label: "Back",
+          href: "/",
+          target: 'app'
+        }
+      }
+    });
+
+  <% if flash[:notice] %>
+    ShopifyApp.flashNotice("<%= flash[:notice] %>");
+  <% end %>
+
+  <% if flash[:error] %>
+    ShopifyApp.flashError("<%= flash[:error] %>");
+  <% end %>
+
+  });
+</script>
+
 <h1>Please Enter your Shipwire Credentials</h1>
 
-<form action="/fulfillment_service" method="post">
+<form method="POST" action="/fulfillment_service" data-shopify-app-submit="save-credentials-form-message">
   <input type="text" name="username" placeholder="username">
   <input type="password" name="password" placeholder="password">
-  <input type="submit" value="Save" />
 </form>

@@ -6,7 +6,7 @@ task :server do
 end
 
 task :deploy do
-  pipe = IO.popen("git push heroku master")
+  pipe = IO.popen("git push heroku master --force")
   while (line = pipe.gets)
     print line
   end

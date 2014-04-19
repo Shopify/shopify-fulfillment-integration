@@ -10,7 +10,9 @@ class SinatraApp < ShopifyApp
 
   # Home page
   get '/' do
-    erb :home
+    shopify_session do
+      erb :home
+    end
   end
 
   # /fulfill
@@ -33,8 +35,6 @@ class SinatraApp < ShopifyApp
       if service.fulfill(order, fulfillment)
         fulfillment.complete
       end
-
-      status 200
     end
   end
 
@@ -107,12 +107,12 @@ class SinatraApp < ShopifyApp
   end
 
   def uninstall
-    webhook_session do |shop, params|
-      # remove any dependent models
-      service = FulfillmentService.where(shop_id: shop.id).destroy_all
-      # remove shop model
-      shop.destroy
-    end
+    # webhook_session do |shop, params|
+    #   # remove any dependent models
+    #   service = FulfillmentService.where(shop_id: shop.id).destroy_all
+    #   # remove shop model
+    #   shop.destroy
+    # end
   end
 
   def fulfillment_session(&blk)
