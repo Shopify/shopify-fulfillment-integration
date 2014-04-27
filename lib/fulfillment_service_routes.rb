@@ -1,5 +1,5 @@
-require './base'
-require './fulfillment_service'
+require './lib/base'
+require './lib/fulfillment_service'
 
 class SinatraApp < ShopifyApp
 

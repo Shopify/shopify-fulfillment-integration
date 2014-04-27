@@ -1,4 +1,4 @@
-require './base'
+require './lib/base'
 require 'attr_encrypted'
 require 'active_fulfillment'
 

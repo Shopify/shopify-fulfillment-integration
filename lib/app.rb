@@ -1,6 +1,6 @@
-require './base'
-require './fulfillment_service'
-require './fulfillment_service_routes'
+require './lib/base'
+require './lib/fulfillment_service'
+require './lib/fulfillment_service_routes'
 
 if Sinatra::Base.development?
   require 'byebug'
