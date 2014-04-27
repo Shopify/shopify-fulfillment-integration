@@ -15,6 +15,8 @@ class SinatraApp < ShopifyApp
       else
         flash[:error] = "Error Saving Credentials"
       end
+
+      redirect '/'
     end
   end
 
@@ -30,6 +32,8 @@ class SinatraApp < ShopifyApp
         flash[:error] = "Error Updating Credentials"
       end
     end
+
+    redirect '/'
   end
 
   private

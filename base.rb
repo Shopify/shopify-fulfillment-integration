@@ -27,7 +27,7 @@ class ShopifyApp < Sinatra::Base
     SECRET = `sed -n '3p' .env`.split('=').last.strip
   end
 
-  use Rack::Flash
+  use Rack::Flash, :sweep => true
   use Rack::MethodOverride
   use Rack::Session::Cookie, :key => '#{base_url}.session',
                              :path => '/',
