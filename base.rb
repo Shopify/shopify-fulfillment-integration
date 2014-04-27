@@ -82,8 +82,7 @@ class ShopifyApp < Sinatra::Base
     session[:shopify][:shop] = shop_name
     session[:shopify][:token] = token
 
-    shop = Shop.where(:name => shop_name)
-    if shop.blank?
+    if Shop.where(:name => shop_name).blank?
       Shop.create(:name => shop_name, :token => token)
       install
     end
@@ -128,19 +127,19 @@ class ShopifyApp < Sinatra::Base
   end
 
   def webhook_session(&blk)
-    if verify_shopify_webhook
-      shop_name = request.env['HTTP_X_SHOPIFY_SHOP_DOMAIN']
-      shop = Shop.find_by(:name => shop_name)
+    return unless verify_shopify_webhook
 
-      if shop.present?
-        params = ActiveSupport::JSON.decode(request.body.read.to_s)
-        api_session = ShopifyAPI::Session.new(shop_name, shop.token)
-        ShopifyAPI::Base.activate_session(api_session)
+    shop_name = request.env['HTTP_X_SHOPIFY_SHOP_DOMAIN']
+    shop = Shop.find_by(:name => shop_name)
 
-        yield shop, params
+    if shop.present?
+      params = ActiveSupport::JSON.decode(request.body.read.to_s)
+      api_session = ShopifyAPI::Session.new(shop_name, shop.token)
+      ShopifyAPI::Base.activate_session(api_session)
 
-        status 200
-      end
+      yield shop, params
+
+      status 200
     end
   end
 
