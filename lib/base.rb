@@ -8,13 +8,14 @@ require 'shopify_api'
 
 class ShopifyApp < Sinatra::Base
   register Sinatra::ActiveRecordExtension
+
   set :database_file, "config/database.yml"
+  set :public_folder, "public"
+  set :erb, :layout => :'layouts/application'
+  set :protection, :except => :frame_options
 
   enable :sessions
   enable :inline_templates
-  set :public_folder, 'public'
-  set :erb, :layout => :'layouts/application'
-  set :protection, :except => :frame_options
 
   SCOPE = YAML.load(File.read("config/app.yml"))["scope"]
 
