@@ -3,20 +3,29 @@
 <h2>Shipwire Account</h2>
 
 <% if @service %>
-  <form method="POST" action="/fulfillment_service" data-shopify-app-submit="save-credentials-form-message">
-    <input type="hidden" name="_method" value="put" />
 
-    <input type="text" name="username" value="<%= @service.username %>" placeholder="username">
-    <input type="password" name="password" value="password" placeholder="password">
+  <form method="POST" action="/fulfillment_service" class="form-horizontal" role="form">
+    <div class="form-group">
+      <input type="hidden" name="_method" value="put" />
 
-    <input type="submit" value="save">
+      <input type="text" class="form-control" name="username" value="<%= @service.username %>" placeholder="username">
+      <input type="password" class="form-control" name="password" value="password" placeholder="password">
+
+      <input type="submit" class="btn btn-default" value="save">
+    </div>
   </form>
+
 <% else %>
-  <p>Please Enter your Shipwire Account to complete the installation</p>
-  <form method="POST" action="/fulfillment_service" data-shopify-app-submit="save-credentials-form-message">
-    <input type="text" name="username" placeholder="username">
-    <input type="password" name="password" placeholder="password">
 
-    <input type="submit" value="save">
+  <p>Please Enter your Shipwire Account to complete the installation</p>
+
+  <form method="POST" action="/fulfillment_service" class="form-horizontal" role="form">
+    <div class="form-group">
+      <input type="text" class="form-control" name="username" placeholder="username">
+      <input type="password" class="form-control" name="password" placeholder="password">
+
+      <input type="submit" class="btn btn-default" value="save">
+    </div>
   </form>
+
 <% end %>

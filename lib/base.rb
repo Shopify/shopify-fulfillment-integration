@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require "sinatra/activerecord"
+require 'sinatra/twitter-bootstrap'
 require 'active_support/all'
 require 'attr_encrypted'
 require 'rack-flash'
