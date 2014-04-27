@@ -12,6 +12,7 @@ class ShopifyApp < Sinatra::Base
   register Sinatra::Twitter::Bootstrap::Assets
 
   set :database_file, "config/database.yml"
+  set :views, "views"
   set :public_folder, "public"
   set :erb, :layout => :'layouts/application'
   set :protection, :except => :frame_options
