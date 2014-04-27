@@ -5,16 +5,20 @@
 <h2>Shipwire Account</h2>
 
 <% if @service %>
+  <p>Please Enter your Shipwire Account to complete the installation</p>
   <form method="POST" action="/fulfillment_service" data-shopify-app-submit="save-credentials-form-message">
     <input type="hidden" name="_method" value="put" />
+
     <input type="text" name="username" value="<%= @service.username %>" placeholder="username">
     <input type="password" name="password" value="password" placeholder="password">
+
     <input type="submit" value="save">
   </form>
 <% else %>
   <form method="POST" action="/fulfillment_service" data-shopify-app-submit="save-credentials-form-message">
     <input type="text" name="username" placeholder="username">
     <input type="password" name="password" placeholder="password">
+
     <input type="submit" value="save">
   </form>
 <% end %>
