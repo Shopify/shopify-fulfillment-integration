@@ -89,7 +89,7 @@ class ShopifyApp < Sinatra::Base
       install
     end
 
-    return_to = env['omniauth.params']["return_to"]
+    return_to = env['omniauth.params']['return_to']
     redirect return_to
   end
 
