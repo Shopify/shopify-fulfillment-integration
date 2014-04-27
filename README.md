@@ -25,6 +25,8 @@ SECRET=<generate a random string to encrypt credentials with>
 
 The rake command `creds2heroku` will copy these env variables to your Heroku app.
 
+You'll also want to update the `config/app.yml` file with your app url and make any other changes you want.
+
 Now you can run the app locally using `rake server` or deploy the app to Heroku using `rake deploy`. If you run the app locally you'll need to allow running unsafe scripts in your browser due to mixed content restrictions, you can read more about this [here](http://docs.shopify.com/embedded-app-sdk/getting-started) and [here](https://developer.mozilla.org/en-US/docs/Security/MixedContent)
 
 After you have the app running visit the install page (located at your url + '/install') and install the app on your Shopify test store. Then you will need to add your Shipwire Credentials - you can create a Shipwire developer account which will let you make requests in `test` mode - the app is configured for this by default. In test mode Shipwire will always return the same data regardless of what is in the request. Therefore when creating a product to use the custom fulfillment app always use either `GD802-024` or `GD201-500` for the SKU.
