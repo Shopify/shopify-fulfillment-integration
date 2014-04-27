@@ -172,9 +172,8 @@ class ShopifyApp < Sinatra::Base
 
   def authenticate(return_to = '/')
     if shop_name = sanitize_shop_param(params)
-      @redirect_url = "/auth/shopify?shop=#{shop_name}&return_to=#{base_url}#{return_to}"
-      #erb :iframe_redirect, :layout => false
-      fullpage_redirect_to @redirect_url
+      redirect_url = "/auth/shopify?shop=#{shop_name}&return_to=#{base_url}#{return_to}"
+      fullpage_redirect_to redirect_url
     else
       redirect "/install"
     end
