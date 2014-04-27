@@ -116,13 +116,13 @@ class ShopifyApp < Sinatra::Base
       logout
       get_session
     else
-      shop = session[:shopify][:shop]
+      shop_name = session[:shopify][:shop]
       token = session[:shopify][:token]
 
-      api_session = ShopifyAPI::Session.new(shop, token)
+      api_session = ShopifyAPI::Session.new(shop_name, token)
       ShopifyAPI::Base.activate_session(api_session)
 
-      yield shop
+      yield shop_name
     end
   end
 

@@ -10,8 +10,9 @@ class SinatraApp < ShopifyApp
 
   # Home page
   get '/' do
-    shopify_session do |shop|
-      @service = FulfillmentService.find_by(shop_id: shop.id)
+    shopify_session do |shop_name|
+      @shop = Shop.find_by(:name => shop_name)
+      @service = FulfillmentService.find_by(shop_id: @shop.id)
       erb :home
     end
   end
