@@ -1,5 +1,5 @@
 require './lib/base'
-require './lib/fulfillment_service'
+require './lib/models/fulfillment_service'
 require './lib/fulfillment_service_routes'
 
 if Sinatra::Base.development?
