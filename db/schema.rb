@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140418201950) do
+ActiveRecord::Schema.define(version: 20140427203624) do
 
   create_table "fulfillment_services", force: true do |t|
     t.integer "shop_id"
@@ -21,10 +21,10 @@ ActiveRecord::Schema.define(version: 20140418201950) do
   add_index "fulfillment_services", ["shop_id"], name: "index_fulfillment_services_on_shop_id"
 
   create_table "shops", force: true do |t|
-    t.string "shop"
+    t.string "name"
     t.string "token_encrypted"
   end
 
-  add_index "shops", ["shop"], name: "index_shops_on_shop"
+  add_index "shops", ["name"], name: "index_shops_on_name"
 
 end

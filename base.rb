@@ -86,9 +86,9 @@ class ShopifyApp < Sinatra::Base
     session[:shopify][:shop] = shop_name
     session[:shopify][:token] = token
 
-    shop = Shop.where(:shop => shop_name)
+    shop = Shop.where(:name => shop_name)
     if shop.blank?
-      Shop.create(:shop => shop_name, :token => token)
+      Shop.create(:name => shop_name, :token => token)
       install
     end
 
@@ -134,7 +134,7 @@ class ShopifyApp < Sinatra::Base
   def webhook_session(&blk)
     if verify_shopify_webhook
       shop_name = request.env['HTTP_X_SHOPIFY_SHOP_DOMAIN']
-      shop = Shop.find_by(:shop => shop_name)
+      shop = Shop.find_by(:name => shop_name)
 
       if shop.present?
         params = ActiveSupport::JSON.decode(request.body.read.to_s)
@@ -160,13 +160,13 @@ class ShopifyApp < Sinatra::Base
 
   def get_session
     shop_name = sanitize_shop_param(params)
-    shop = Shop.find_by(:shop => shop_name)
+    shop = Shop.find_by(:name => shop_name)
 
     return_to = request.env["sinatra.route"].split(' ').last
 
     if shop.present?
       session[:shopify] ||= {}
-      session[:shopify][:shop] = shop.shop
+      session[:shopify][:shop] = shop.name
       session[:shopify][:token] = shop.token
       redirect return_to
     else
@@ -215,5 +215,5 @@ end
 
 class Shop < ActiveRecord::Base
   attr_encrypted :token, :key => ShopifyApp::SECRET, :attribute => 'token_encrypted'
-  validates_presence_of :shop, :token
+  validates_presence_of :name, :token
 end

@@ -117,7 +117,7 @@ class SinatraApp < ShopifyApp
 
   def fulfillment_session(&blk)
     shop_name = params["shop"]
-    shop = Shop.find_by(:shop => shop_name)
+    shop = Shop.find_by(:name => shop_name)
     if shop.present?
       service = FulfillmentService.find_by(shop_id: shop.id)
       if service.present?
