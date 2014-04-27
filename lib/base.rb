@@ -8,6 +8,7 @@ require 'shopify_api'
 
 class ShopifyApp < Sinatra::Base
   register Sinatra::ActiveRecordExtension
+  register Sinatra::Twitter::Bootstrap::Assets
 
   set :database_file, "config/database.yml"
   set :public_folder, "public"
