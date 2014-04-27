@@ -6,9 +6,10 @@ class SinatraApp < ShopifyApp
   post '/fulfillment_service' do
     shopify_session do
       shop_name = session[:shopify][:shop]
-      shop = Shop.where(:shop => shop_name).first
+      shop = Shop.where(:name => shop_name).first
       params.merge!(shop: shop)
       service = FulfillmentService.new(params)
+
       if service.save
         flash[:notice] = "Credentials Saved"
       else
@@ -20,7 +21,7 @@ class SinatraApp < ShopifyApp
   put '/fulfillment_service' do
     shopify_session do
       shop_name = session[:shopify][:shop]
-      shop = Shop.find_by(:shop => shop_name)
+      shop = Shop.find_by(:name => shop_name)
       service = FulfillmentService.find_by(shop_id: shop.id)
 
       if service.update_attributes(service_params(params))
