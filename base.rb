@@ -56,7 +56,7 @@ class ShopifyApp < Sinatra::Base
   end
 
   # endpoint for the app/uninstall webhook
-  post 'uninstall.json' do
+  post '/uninstall.json' do
     uninstall
   end
 
@@ -64,7 +64,7 @@ class ShopifyApp < Sinatra::Base
     authenticate
   end
 
-  get 'logout' do
+  get '/logout' do
     logout
     redirect '/install'
   end
