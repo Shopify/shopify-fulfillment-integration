@@ -60,10 +60,6 @@ class ShopifyApp < Sinatra::Base
     uninstall
   end
 
-  get '/login' do
-    erb :login
-  end
-
   post '/login' do
     authenticate
   end
