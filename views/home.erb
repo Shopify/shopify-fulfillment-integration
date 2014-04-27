@@ -2,9 +2,19 @@
 
 <h1>Shopify Fulfillment Service Integration App</h1>
 
-<% if current_shop %>
-  <p><%= current_shop %></p>
-  <a href="fulfillment_service/edit">Settings</a>
+<h2>Shipwire Account</h2>
+
+<% if @service %>
+  <form method="POST" action="/fulfillment_service" data-shopify-app-submit="save-credentials-form-message">
+    <input type="hidden" name="_method" value="put" />
+    <input type="text" name="username" value="<%= @service.username %>" placeholder="username">
+    <input type="password" name="password" value="password" placeholder="password">
+    <input type="submit" value="save">
+  </form>
 <% else %>
-  <a href="login">login</a>
+  <form method="POST" action="/fulfillment_service" data-shopify-app-submit="save-credentials-form-message">
+    <input type="text" name="username" placeholder="username">
+    <input type="password" name="password" placeholder="password">
+    <input type="submit" value="save">
+  </form>
 <% end %>

@@ -10,7 +10,8 @@ class SinatraApp < ShopifyApp
 
   # Home page
   get '/' do
-    shopify_session do
+    shopify_session do |shop|
+      @service = FulfillmentService.find_by(shop_id: shop.id)
       erb :home
     end
   end
@@ -103,7 +104,7 @@ class SinatraApp < ShopifyApp
         uninstall_webhook.save
       end
     end
-    redirect '/fulfillment_service/new'
+    redirect '/'
   end
 
   def uninstall
