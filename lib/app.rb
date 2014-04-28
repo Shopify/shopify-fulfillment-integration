@@ -2,10 +2,6 @@ require './lib/base'
 require './lib/models/fulfillment_service'
 require './lib/fulfillment_service_routes'
 
-if Sinatra::Base.development?
-  require 'byebug'
-end
-
 class SinatraApp < ShopifyApp
 
   # Home page
@@ -14,7 +10,8 @@ class SinatraApp < ShopifyApp
       @shop = Shop.find_by(:name => shop_name)
       @service = FulfillmentService.find_by(shop_id: @shop.id)
 
-      @products = ShopifyAPI::Variant.all.select{ |variant| variant.fulfillment_service == @service.name }
+      # this is quick and dirty - this should be paginated etc.
+      @products = ShopifyAPI::Variant.find(:all).select{ |variant| variant.fulfillment_service == @service.name }
 
       erb :home
     end

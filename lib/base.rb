@@ -7,6 +7,10 @@ require 'rack-flash'
 require 'omniauth-shopify-oauth2'
 require 'shopify_api'
 
+if Sinatra::Base.development?
+  require 'byebug'
+end
+
 class ShopifyApp < Sinatra::Base
   register Sinatra::ActiveRecordExtension
   register Sinatra::Twitter::Bootstrap::Assets
