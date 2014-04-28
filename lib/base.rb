@@ -78,11 +78,6 @@ class ShopifyApp < Sinatra::Base
     redirect '/install'
   end
 
-  get '/auth/failure' do
-    erb "<h1>Authentication Failed:</h1>
-         <h3>message:<h3> <pre>#{params}</pre>"
-  end
-
   get '/auth/shopify/callback' do
     shop_name = params["shop"]
     token = request.env['omniauth.auth']['credentials']['token']
@@ -100,7 +95,20 @@ class ShopifyApp < Sinatra::Base
     redirect return_to
   end
 
+  get '/auth/failure' do
+    erb "<h1>Authentication Failed:</h1>
+         <h3>message:<h3> <pre>#{params}</pre>"
+  end
+
   protected
+
+  def install
+    raise NotImplementedError
+  end
+
+  def uninstall
+    raise NotImplementedError
+  end
 
   def logout
     session[:shopify] = nil
@@ -150,14 +158,6 @@ class ShopifyApp < Sinatra::Base
 
       status 200
     end
-  end
-
-  def install
-    raise NotImplementedError
-  end
-
-  def uninstall
-    raise NotImplementedError
   end
 
   private
