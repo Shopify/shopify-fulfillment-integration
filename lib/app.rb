@@ -13,6 +13,9 @@ class SinatraApp < ShopifyApp
     shopify_session do |shop_name|
       @shop = Shop.find_by(:name => shop_name)
       @service = FulfillmentService.find_by(shop_id: @shop.id)
+
+      @products = ShopifyAPI::Variant.all.select{ |variant| variant.fulfillment_service == @service.name }
+
       erb :home
     end
   end

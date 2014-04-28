@@ -78,3 +78,25 @@
 
 <% end %>
 </div>
+
+<h3>Products</h3>
+
+<div class="well">
+<% if @products.present? %>
+
+  <table class="table table-striped table-hover">
+    <tbody>
+      <% @products.each do |variant| %>
+        <tr>
+          <td>
+            <a href=<%="https://#{@shop.name}/admin/products/#{variant.product_id}"%>> <%= variant.sku %> </a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<% else %>
+  <p> No products are using this Fulfillment Service yet.</p>
+<% end %>
+</div>
