@@ -11,7 +11,7 @@ class SinatraApp < ShopifyApp
       @service = FulfillmentService.find_by(shop_id: @shop.id)
 
       # this is quick and dirty - this should be paginated etc.
-      @products = ShopifyAPI::Variant.find(:all).select{ |variant| variant.fulfillment_service == @service.name }
+      @products = ShopifyAPI::Variant.find(:all).select{ |variant| variant.fulfillment_service == FulfillmentService.service_name }
 
       erb :home
     end
