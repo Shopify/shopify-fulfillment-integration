@@ -1,4 +1,5 @@
 require "sinatra/activerecord/rake"
+require 'rake/testtask'
 require "./lib/app"
 
 task :server do
@@ -9,6 +10,20 @@ task :deploy do
   pipe = IO.popen("git push heroku master --force")
   while (line = pipe.gets)
     print line
+  end
+end
+
+task :test_prepare do
+  `RACK_ENV=test rake db:create`
+  `RACK_ENV=test rake db:migrate`
+  `RACK_ENV=test rake db:seed`
+end
+
+task :test do
+  Rake::TestTask.new do |t|
+    t.pattern = 'test/*_test.rb'
+    t.libs << 'test'
+    t.verbose = true
   end
 end
 

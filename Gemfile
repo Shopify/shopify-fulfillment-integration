@@ -22,6 +22,9 @@ end
 
 group :development do
   gem 'sqlite3'
+  gem 'rack-test'
+  gem 'fakeweb'
+  gem 'mocha', require: false
   gem 'pry'
   gem 'byebug'
 end

@@ -8,7 +8,7 @@ class FulfillmentService < ActiveRecord::Base
   attr_encrypted :password, :key => ShopifyApp::SECRET, :attribute => 'password_encrypted'
   validates_presence_of :username, :password
   validates :shop, uniqueness: true
-  before_save :check_credentials
+  before_save :check_credentials, unless: "Sinatra::Base.test?"
 
   def self.service_name
     @name ||= YAML.load(File.read("config/app.yml"))["service"]["name"]

@@ -7,7 +7,7 @@ require 'rack-flash'
 require 'omniauth-shopify-oauth2'
 require 'shopify_api'
 
-if Sinatra::Base.development?
+if Sinatra::Base.development? ||  Sinatra::Base.test?
   require 'byebug'
 end
 
