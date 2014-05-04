@@ -51,3 +51,29 @@ task :creds2heroku do
     `heroku config:set #{secret}`
   }
 end
+
+namespace :resque do
+  task :info do
+    puts Resque.info
+  end
+
+  task :queues do
+    puts Resque.queues
+  end
+
+  task :redis do
+    puts Resque.redis
+  end
+
+  task :size do
+    puts Resque.size(:default)
+  end
+
+  task :peek do
+    puts Resque.peek(:default)
+  end
+
+  task :working do
+    puts Resque.working
+  end
+end
