@@ -8,20 +8,33 @@ class AppTest < Test::Unit::TestCase
   end
 
   def test_fulfill
+    shop_name = "testshop.myshopify.com"
     fulfillment_webhook = load_fixture 'fulfillment_webhook.json'
+    params = ActiveSupport::JSON.decode(fulfillment_webhook)
+
     SinatraApp.any_instance.expects(:verify_shopify_webhook).returns(true)
+    Resque.expects(:enqueue).with(FulfillmentJob, params, shop_name).returns(true)
 
-    shop_url = "https://testshop.myshopify.com/admin"
-    fake "#{shop_url}/orders/450789469.json", :body => load_fixture('order.json')
-    fake "#{shop_url}/orders/450789469/fulfillments/255858046.json", :body => load_fixture('fulfillment.json')
-
-    FulfillmentService.any_instance.expects(:fulfill).returns(true)
-    ShopifyAPI::Fulfillment.any_instance.expects(:complete).returns(true)
-
-    post '/fulfill.json', fulfillment_webhook, 'HTTP_X_SHOPIFY_SHOP_DOMAIN' => 'testshop.myshopify.com'
+    post '/fulfill.json', fulfillment_webhook, 'HTTP_X_SHOPIFY_SHOP_DOMAIN' => shop_name
 
     assert last_response.ok?
   end
+
+  # def test_fulfill
+  #   fulfillment_webhook = load_fixture 'fulfillment_webhook.json'
+  #   SinatraApp.any_instance.expects(:verify_shopify_webhook).returns(true)
+
+  #   shop_url = "https://testshop.myshopify.com/admin"
+  #   fake "#{shop_url}/orders/450789469.json", :body => load_fixture('order.json')
+  #   fake "#{shop_url}/orders/450789469/fulfillments/255858046.json", :body => load_fixture('fulfillment.json')
+
+  #   FulfillmentService.any_instance.expects(:fulfill).returns(true)
+  #   ShopifyAPI::Fulfillment.any_instance.expects(:complete).returns(true)
+
+  #   post '/fulfill.json', fulfillment_webhook, 'HTTP_X_SHOPIFY_SHOP_DOMAIN' => 'testshop.myshopify.com'
+
+  #   assert last_response.ok?
+  # end
 
   def test_fetch_stock
     response = stub(stock_levels: {'123' => 10})
