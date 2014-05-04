@@ -50,9 +50,12 @@ task :creds2heroku do
     api_key = `sed -n '1p' .env`
     shared_secret = `sed -n '2p' .env`
     secret = `sed -n '3p' .env`
+    resque_pw = `sed -n '4p' .env`
+
     `heroku config:set #{api_key}`
     `heroku config:set #{shared_secret}`
     `heroku config:set #{secret}`
+    `heroku config:set #{resque_pw}`
   }
 end
 
