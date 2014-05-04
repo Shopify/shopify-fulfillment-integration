@@ -28,18 +28,6 @@ class SinatraApp < ShopifyApp
   #
   post '/fulfill.json' do
     webhook_job(FulfillmentJob)
-    # webhook_session do |shop, params|
-    #   return status 200 unless params["service"] == FulfillmentService.service_name
-
-    #   order = ShopifyAPI::Order.find(params["order_id"])
-    #   fulfillment = ShopifyAPI::Fulfillment.find(params["id"], :params => {:order_id => params["order_id"]})
-
-    #   service = FulfillmentService.find_by(shop_id: shop.id)
-
-    #   if service.fulfill(order, fulfillment)
-    #     fulfillment.complete
-    #   end
-    # end
   end
 
   # /fetch_stock
