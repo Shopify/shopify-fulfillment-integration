@@ -76,4 +76,22 @@ namespace :resque do
   task :working do
     puts Resque.working
   end
+
+  task :failed do
+    puts Resque::Failure.count
+  end
+
+  task :failed_backtrace do
+    Resque::Failure.all(0,20).each { |job|
+       puts "#{job["exception"]}  #{job["backtrace"]}"
+    }
+  end
+
+  task :retry_failed do
+    (Resque::Failure.count-1).downto(0).each { |i| Resque::Failure.requeue(i) }
+  end
+
+  task :clear_failures do
+    Resque::Failure.clear
+  end
 end
