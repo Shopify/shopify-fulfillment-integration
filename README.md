@@ -13,9 +13,10 @@ heroku apps:create <my_fulfillment_app>
 
 * note you will need a Heroku account and the Heroku toolbelt installed for your OS, check out [Getting Started with Heroku](https://devcenter.heroku.com/articles/quickstart)
 
-You will also need to [add a database](https://devcenter.heroku.com/articles/heroku-postgresql) and the following (free) add-ons to your new Heroku app:
+You will also need to add the following (free) add-ons to your new Heroku app:
 
 ```
+heroku addons:add heroku-postgresql
 heroku addons:add rediscloud
 ```
 
