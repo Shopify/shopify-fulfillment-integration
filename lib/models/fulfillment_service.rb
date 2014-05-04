@@ -71,8 +71,8 @@ class FulfillmentService < ActiveRecord::Base
      :comment         => 'Thank you for your purchase',
      :email           => order.email,
      :tracking_number => fulfillment.tracking_number,
-     :warehouse       => '00',
-     :shipping_method => "1D", # order.shipping_lines.first.code
+     :warehouse       => '00', # shipwire specific
+     :shipping_method => "1D", # order.shipping_lines.first.code, also shipwire specific
      :note            => order.note}
   end
 

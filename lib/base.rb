@@ -1,5 +1,7 @@
 require 'sinatra/base'
-require "sinatra/activerecord"
+require 'sinatra/activerecord'
+require 'sinatra/redis'
+require 'resque'
 require 'sinatra/twitter-bootstrap'
 require 'active_support/all'
 require 'attr_encrypted'
@@ -42,6 +44,14 @@ class ShopifyApp < Sinatra::Base
                              :path => '/',
                              :secret => SECRET,
                              :expire_after => 2592000
+
+  REDIS_URL = ENV["REDISCLOUD_URL"] || "redis://localhost:6379/"
+  redis_uri = URI.parse(REDIS_URL)
+  Resque.redis = Redis.new(:host => redis_uri.host,
+                           :port => redis_uri.port,
+                           :password => redis_uri.password)
+  Resque.redis.namespace = "resque"
+  set :redis, REDIS_URL
 
   use OmniAuth::Builder do
     provider :shopify,
@@ -158,6 +168,17 @@ class ShopifyApp < Sinatra::Base
 
       status 200
     end
+  end
+
+  def webhook_job(jobKlass)
+    return unless verify_shopify_webhook
+
+    params = ActiveSupport::JSON.decode(request.body.read.to_s)
+    shop_name = request.env['HTTP_X_SHOPIFY_SHOP_DOMAIN']
+
+    Resque.enqueue(jobKlass, params, shop_name)
+
+    status 200
   end
 
   private

@@ -1,6 +1,7 @@
-require "sinatra/activerecord/rake"
+require 'sinatra/activerecord/rake'
+require 'resque/tasks'
 require 'rake/testtask'
-require "./lib/app"
+require './lib/app'
 
 task :server do
   SinatraApp.run!

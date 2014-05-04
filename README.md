@@ -13,6 +13,18 @@ heroku apps:create <my_fulfillment_app>
 
 * note you will need a Heroku account and the Heroku toolbelt installed for your OS, check out [Getting Started with Heroku](https://devcenter.heroku.com/articles/quickstart)
 
+You will also need to [add a database](https://devcenter.heroku.com/articles/heroku-postgresql) and the following (free) add-ons to your new Heroku app:
+
+```
+heroku addons:add rediscloud
+```
+
+and make sure you have at least 1 dyno for web and resque:
+
+```
+heroku scale web=1 resque=1
+```
+
 You will also need to create a Shopify Partner Account and a new application. You can make an account [here](http://www.shopify.ca/partners) and see this [tutorial](http://docs.shopify.com/api/the-basics/getting-started) for creating a new application.
 
 After creating your new application you need to create a `.env` file and add the following variables:

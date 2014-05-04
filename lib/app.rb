@@ -1,5 +1,6 @@
 require './lib/base'
 require './lib/models/fulfillment_service'
+require './lib/jobs/fulfillment_job'
 require './lib/fulfillment_service_routes'
 
 class SinatraApp < ShopifyApp
@@ -26,18 +27,19 @@ class SinatraApp < ShopifyApp
   # fulfillment.
   #
   post '/fulfill.json' do
-    webhook_session do |shop, params|
-      return status 200 unless params["service"] == FulfillmentService.service_name
+    webhook_job(FulfillmentJob)
+    # webhook_session do |shop, params|
+    #   return status 200 unless params["service"] == FulfillmentService.service_name
 
-      order = ShopifyAPI::Order.find(params["order_id"])
-      fulfillment = ShopifyAPI::Fulfillment.find(params["id"], :params => {:order_id => params["order_id"]})
+    #   order = ShopifyAPI::Order.find(params["order_id"])
+    #   fulfillment = ShopifyAPI::Fulfillment.find(params["id"], :params => {:order_id => params["order_id"]})
 
-      service = FulfillmentService.find_by(shop_id: shop.id)
+    #   service = FulfillmentService.find_by(shop_id: shop.id)
 
-      if service.fulfill(order, fulfillment)
-        fulfillment.complete
-      end
-    end
+    #   if service.fulfill(order, fulfillment)
+    #     fulfillment.complete
+    #   end
+    # end
   end
 
   # /fetch_stock
