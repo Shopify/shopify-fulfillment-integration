@@ -87,7 +87,7 @@
       <% @products.each do |variant| %>
         <tr>
           <td>
-            <a href=<%="https://#{@shop.name}/admin/products/#{variant.product_id}"%> target="_blank"> <%= variant.sku %> </a>
+            <a href=<%="#{current_shop_url}/admin/products/#{variant.product_id}"%> target="_blank"> <%= variant.sku %> </a>
           </td>
         </tr>
       <% end %>

@@ -13,7 +13,7 @@ class AppTest < Test::Unit::TestCase
     params = ActiveSupport::JSON.decode(fulfillment_webhook)
 
     SinatraApp.any_instance.expects(:verify_shopify_webhook).returns(true)
-    Resque.expects(:enqueue).with(FulfillmentJob, params, shop_name).returns(true)
+    Resque.expects(:enqueue).with(FulfillmentJob, shop_name, 'token', params).returns(true)
 
     post '/fulfill.json', fulfillment_webhook, 'HTTP_X_SHOPIFY_SHOP_DOMAIN' => shop_name
 

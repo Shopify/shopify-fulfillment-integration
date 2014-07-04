@@ -1,15 +1,16 @@
-require './lib/base'
+require 'sinatra/shopify-sinatra-app'
 require './lib/models/fulfillment_service'
 require './lib/jobs/fulfillment_job'
 require './lib/fulfillment_service_routes'
 
-class SinatraApp < ShopifyApp
+class SinatraApp < Sinatra::Base
+  register Sinatra::Shopify
+  set :scope, 'write_fulfillments, write_orders, write_products'
 
   # Home page
   get '/' do
-    shopify_session do |shop_name|
-      @shop = Shop.find_by(:name => shop_name)
-      @service = FulfillmentService.find_by(shop_id: @shop.id)
+    shopify_session do
+      @service = FulfillmentService.find_by(shop: current_shop_name)
 
       # this is quick and dirty - this should be paginated etc.
       @products = ShopifyAPI::Variant.find(:all).select{ |variant| variant.fulfillment_service == FulfillmentService.service_name }
@@ -74,47 +75,50 @@ class SinatraApp < ShopifyApp
 
   def install
     shopify_session do
-      params = YAML.load(File.read("config/app.yml"))
 
-      fulfillment_service = ShopifyAPI::FulfillmentService.new(params["service"])
-      fulfillment_webhook = ShopifyAPI::Webhook.new(params["fulfillment_webhook"])
-      uninstall_webhook = ShopifyAPI::Webhook.new(params["uninstall_webhook"])
+      fulfillment_service = ShopifyAPI::FulfillmentService.new({
+        name: "my-fulfillment-service",
+        handle: "my-fulfillment-service",
+        callback_url: "http://fulfillment-service.herokuapp.com",
+        inventory_management: true,
+        tracking_support: true,
+        requires_shipping_method: false,
+        response_format: "json"
+      })
+      fulfillment_service.save
 
-      # create the fulfillment service if not present
-      unless ShopifyAPI::FulfillmentService.find(:all).include?(fulfillment_service)
-        fulfillment_service.save
-      end
+      fulfillment_webhook = ShopifyAPI::Webhook.new({
+        topic: "fulfillments/create",
+        address: "http://fulfillment-service.herokuapp.com/fulfill.json",
+        format: "json"
+      })
+      fulfillment_webhook.save
 
-      # create the fulfillment webhook if not present
-      unless ShopifyAPI::Webhook.find(:all).include?(fulfillment_webhook)
-        fulfillment_webhook.save
-      end
+      uninstall_webhook = ShopifyAPI::Webhook.new({
+        topic: "app/uninstalled",
+        address: "http://fulfillment-service.herokuapp.com/uninstall.json",
+        format: "json"
+      })
+      uninstall_webhook.save
 
-      # create the uninstall webhook if not present
-      unless ShopifyAPI::Webhook.find(:all).include?(uninstall_webhook)
-        uninstall_webhook.save
-      end
     end
     redirect '/'
   end
 
   def uninstall
-    # webhook_session do |shop, params|
-    #   # remove any dependent models
-    #   service = FulfillmentService.where(shop_id: shop.id).destroy_all
-    #   # remove shop model
-    #   shop.destroy
-    # end
+    webhook_session do |params|
+      # remove any dependent models
+      service = FulfillmentService.where(shop: current_shop_name).destroy
+      # remove shop model
+      current_shop.destroy
+    end
   end
 
   def fulfillment_session(&blk)
     shop_name = params["shop"]
-    shop = Shop.find_by(:name => shop_name)
-    if shop.present?
-      service = FulfillmentService.find_by(shop_id: shop.id)
-      if service.present?
-        yield service
-      end
+    service = FulfillmentService.find_by(shop: shop_name)
+    if service.present?
+      yield service
     end
   end
 

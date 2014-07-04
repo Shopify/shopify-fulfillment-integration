@@ -1,17 +1,21 @@
-require './lib/base'
+require 'sinatra/shopify-sinatra-app'
 require 'attr_encrypted'
 require 'active_fulfillment'
 
 class FulfillmentService < ActiveRecord::Base
-  belongs_to :shop
-  attr_encrypted :username, :key => ShopifyApp::SECRET, :attribute => 'username_encrypted'
-  attr_encrypted :password, :key => ShopifyApp::SECRET, :attribute => 'password_encrypted'
+
+  def self.secret
+    ENV['SECRET']
+  end
+
+  attr_encrypted :username, :key => secret, :attribute => 'username_encrypted'
+  attr_encrypted :password, :key => secret, :attribute => 'password_encrypted'
   validates_presence_of :username, :password
   validates :shop, uniqueness: true
   before_save :check_credentials, unless: "Sinatra::Base.test?"
 
   def self.service_name
-    @name ||= YAML.load(File.read("config/app.yml"))["service"]["name"]
+    "my-fulfillment-service"
   end
 
   def fulfill(order, fulfillment)

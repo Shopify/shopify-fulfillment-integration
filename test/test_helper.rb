@@ -1,4 +1,5 @@
 ENV['RACK_ENV'] = 'test'
+ENV['SECRET'] = 'secret'
 
 require 'test/unit'
 require 'rack/test'

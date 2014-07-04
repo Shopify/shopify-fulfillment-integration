@@ -3,25 +3,12 @@ require 'resque/tasks'
 require 'rake/testtask'
 require './lib/app'
 
-task :server do
-  #SinatraApp.run!
-  pipe = IO.popen("bundle exec rackup config.ru -p 4567")
-  while (line = pipe.gets)
-    print line
+namespace :test do
+  task :prepare do
+    `RACK_ENV=test rake db:create`
+    `RACK_ENV=test rake db:migrate`
+    `RACK_ENV=test SECRET=secret rake db:seed`
   end
-end
-
-task :deploy do
-  pipe = IO.popen("git push heroku master --force")
-  while (line = pipe.gets)
-    print line
-  end
-end
-
-task :test_prepare do
-  `RACK_ENV=test rake db:create`
-  `RACK_ENV=test rake db:migrate`
-  `RACK_ENV=test rake db:seed`
 end
 
 task :test do
@@ -45,17 +32,21 @@ task :clear_services do
   FulfillmentService.delete_all
 end
 
+task :deploy do
+  pipe = IO.popen("git push heroku master --force")
+  while (line = pipe.gets)
+    print line
+  end
+end
+
 task :creds2heroku do
   Bundler.with_clean_env {
-    api_key = `sed -n '1p' .env`
-    shared_secret = `sed -n '2p' .env`
-    secret = `sed -n '3p' .env`
-    resque_pw = `sed -n '4p' .env`
-
-    `heroku config:set #{api_key}`
-    `heroku config:set #{shared_secret}`
-    `heroku config:set #{secret}`
-    `heroku config:set #{resque_pw}`
+    File.readlines('.env').each do |var|
+      pipe = IO.popen("heroku config:set #{var}")
+      while (line = pipe.gets)
+        print line
+      end
+    end
   }
 end
 

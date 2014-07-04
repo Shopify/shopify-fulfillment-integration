@@ -4,7 +4,7 @@
   <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
   <script type="text/javascript">
     ShopifyApp.init({
-      apiKey: "<%= ShopifyApp::API_KEY %>",
+      apiKey: "<%= SinatraApp.settings.api_key %>",
       shopOrigin: "<%= current_shop_url %>",
       debug: true
     });

@@ -1,12 +1,11 @@
-require './lib/base'
+require 'sinatra/shopify-sinatra-app'
 require './lib/models/fulfillment_service'
 
-class SinatraApp < ShopifyApp
+class SinatraApp < Sinatra::Base
 
   post '/fulfillment_service' do
-    shopify_session do |shop_name|
-      shop = Shop.where(:name => shop_name).first
-      params.merge!(shop: shop)
+    shopify_session do
+      params.merge!(shop: current_shop_name)
       service = FulfillmentService.new(params)
 
       if service.save
@@ -20,9 +19,8 @@ class SinatraApp < ShopifyApp
   end
 
   put '/fulfillment_service' do
-    shopify_session do |shop_name|
-      shop = Shop.find_by(:name => shop_name)
-      service = FulfillmentService.find_by(shop_id: shop.id)
+    shopify_session do
+      service = FulfillmentService.find_by(shop: current_shop)
 
       if service.update_attributes(service_params(params))
         flash[:notice] = "Credentials Updated"
