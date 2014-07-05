@@ -24,7 +24,7 @@ class SinatraApp < Sinatra::Base
 
   put '/fulfillment_service' do
     shopify_session do
-      service = FulfillmentService.find_by(shop: current_shop)
+      service = FulfillmentService.find_by(shop: current_shop_name)
 
       if service.update_attributes(service_params(params))
         flash[:notice] = "Credentials Updated"
