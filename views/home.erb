@@ -3,10 +3,14 @@
 <h3>Shipwire Account</h3>
 
 <div class="well">
+  <% unless @service %>
+    <p>Please Enter your Shipwire Account to complete the installation</p>
+  <% end %>
 
-<% if @service %>
   <form method="POST" action="/fulfillment_service" role="form">
-    <input type="hidden" name="_method" value="put" />
+    <% if @service %>
+      <input type="hidden" name="_method" value="put" />
+    <% end %>
 
     <div class="form-group">
       <div class="col-sm-4">
@@ -38,45 +42,6 @@
       </div>
     </div>
   </form>
-
-<% else %>
-
-  <p>Please Enter your Shipwire Account to complete the installation</p>
-
-  <form method="POST" action="/fulfillment_service" role="form">
-
-    <div class="form-group">
-      <div class="col-sm-4">
-
-        <div class="control-group">
-          <div class="controls">
-            <div class="input-prepend">
-              <span class="add-on"><i class="icon-user"></i></span>
-              <input type="text" name="username" placeholder="username">
-            </div>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <div class="controls">
-            <div class="input-prepend">
-              <span class="add-on"><i class="icon-lock"></i></span>
-              <input type="password" name="password" placeholder="password">
-            </div>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <div class="controls">
-            <input type="submit" class="btn btn-default" value="save">
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </form>
-
-<% end %>
 </div>
 
 <h3>Products</h3>
