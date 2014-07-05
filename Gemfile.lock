@@ -96,7 +96,7 @@ GEM
       redis-namespace (~> 1.0)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
-    shopify-sinatra-app (0.0.9)
+    shopify-sinatra-app (0.1.0)
       activesupport
       attr_encrypted
       omniauth-shopify-oauth2
@@ -145,5 +145,5 @@ DEPENDENCIES
   pry
   rack-test
   rake
-  shopify-sinatra-app
+  shopify-sinatra-app (~> 0.1.0)
   sqlite3

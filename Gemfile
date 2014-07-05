@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby "2.0.0"
 
 gem 'active_fulfillment'
-gem 'shopify-sinatra-app'
+gem 'shopify-sinatra-app', '~> 0.1.0'
 gem 'foreman'
 gem 'rake'
 
