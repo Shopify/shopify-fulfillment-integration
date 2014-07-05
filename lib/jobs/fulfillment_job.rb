@@ -1,6 +1,11 @@
 require 'sinatra/shopify-sinatra-app'
 require './lib/models/fulfillment_service'
 
+# This is the background job that is enqueued when the app
+# recieves a fulfillment webhook from Shopify. It looks up some
+# more data from Shopify using the API and then forwards the
+# request to the fulfillment service.
+
 class FulfillmentJob
   @queue = :default
 

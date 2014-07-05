@@ -12,7 +12,7 @@ class SinatraApp < Sinatra::Base
     shopify_session do
       @service = FulfillmentService.find_by(shop: current_shop_name)
 
-      # this is quick and dirty - this should be paginated etc.
+      # this should be paginated properly.
       @products = ShopifyAPI::Variant.find(:all).select{ |variant| variant.fulfillment_service == FulfillmentService.service_name }
 
       erb :home
@@ -73,6 +73,10 @@ class SinatraApp < Sinatra::Base
 
   private
 
+  # this method is called when the app is authorized on a Shop for
+  # the first time, thus 'installed'. This methods sets up the services
+  # etc. that we need on Shopify for the app to function, e.g. webhooks
+  # and the fulfillment service object itself.
   def install
     shopify_session do
 
@@ -114,6 +118,9 @@ class SinatraApp < Sinatra::Base
     end
   end
 
+  # This is a helper method in the same vein as the webhook_session
+  # method provided by shopify-sinatra-app only for handling the
+  # fulfillment requests which are slighlty different than webhooks
   def fulfillment_session(&blk)
     shop_name = params["shop"]
     service = FulfillmentService.find_by(shop: shop_name)

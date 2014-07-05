@@ -2,6 +2,12 @@ require 'sinatra/shopify-sinatra-app'
 require 'attr_encrypted'
 require 'active_fulfillment'
 
+# This is the fulfillment service model. It holds all of the data
+# associated with the service such as the shop it belongs to and the
+# credentials (encrypted). It also contains some methods to help translate
+# the fulfillment data from a Shopify format into the format expected by the
+# fulfillment service.
+
 class FulfillmentService < ActiveRecord::Base
 
   def self.secret

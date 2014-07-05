@@ -1,6 +1,10 @@
 require 'sinatra/shopify-sinatra-app'
 require './lib/models/fulfillment_service'
 
+# This file provides the RESTful routes for interacting with the
+# fulfillment service object, namely creating and updating the object
+# for a shop. This file is very similar to a Rails controller.
+
 class SinatraApp < Sinatra::Base
 
   post '/fulfillment_service' do
