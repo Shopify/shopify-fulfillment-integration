@@ -19,6 +19,25 @@ class SinatraApp < Sinatra::Base
     end
   end
 
+  # endpoint for a products index bulk operations app link. You need to set
+  # up this app link on your app in the Shopify Partner area https://app.shopify.com/services/partners
+  # if you want to use this endpoint. We're going to use this endpoint to bulk set products to
+  # be fulfilled and inventory managed by our service. For my example app I called this app link
+  # 'fulfill with my-fulfillment-service' on Shopify.
+  get '/product_app_link' do
+    shopify_session do
+      params["ids"].each do |id|
+        product = ShopifyAPI::Product.find(id)
+        product.variants.each do |variant|
+          variant.fulfillment_service = 'my-fulfillment-service'
+          variant.inventory_management = 'my-fulfillment-service'
+        end
+        product.save
+      end
+      redirect '/'
+    end
+  end
+
   # /fulfill
   # reciever of fulfillments/create webhook
   # if the fulfillment uses this service then
