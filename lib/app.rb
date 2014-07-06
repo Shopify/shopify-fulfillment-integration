@@ -34,14 +34,17 @@ class SinatraApp < Sinatra::Base
   # 'fulfill with my-fulfillment-service' on Shopify.
   get '/product_app_link' do
     shopify_session do
+      saved = 0
       params["ids"].each do |id|
         product = ShopifyAPI::Product.find(id)
         product.variants.each do |variant|
           variant.fulfillment_service = 'my-fulfillment-service'
           variant.inventory_management = 'my-fulfillment-service'
         end
-        product.save
+        saved +=1 if product.save
       end
+
+      flash[:notice] = "Updated Fulfillment Settings for #{saved} products"
       redirect '/'
     end
   end
