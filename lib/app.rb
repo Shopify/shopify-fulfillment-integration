@@ -16,7 +16,7 @@ class SinatraApp < Sinatra::Base
       @products = []
       page = 1
       begin
-        batch = ShopifyAPI::Variant.find(:all, params: {limit: 10, page: page})
+        batch = ShopifyAPI::Variant.find(:all, params: {limit: 250, page: page})
         @products.concat batch.select { |variant|
           variant.fulfillment_service == FulfillmentService.service_name
         }
