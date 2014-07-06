@@ -12,8 +12,16 @@ class SinatraApp < Sinatra::Base
     shopify_session do
       @service = FulfillmentService.find_by(shop: current_shop_name)
 
-      # this should be paginated properly.
-      @products = ShopifyAPI::Variant.find(:all).select{ |variant| variant.fulfillment_service == FulfillmentService.service_name }
+      # Fetch all the variants being fulfilled with this service
+      @products = []
+      page = 1
+      begin
+        batch = ShopifyAPI::Variant.find(:all, params: {limit: 10, page: page})
+        @products.concat batch.select { |variant|
+          variant.fulfillment_service == FulfillmentService.service_name
+        }
+        page += 1
+      end while batch.size > 0
 
       erb :home
     end
