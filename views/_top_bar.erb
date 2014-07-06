@@ -2,7 +2,7 @@
 
   ShopifyApp.ready(function(){
     ShopifyApp.Bar.initialize({
-      icon: 'https://fulfillment-service.herokuapp.com/icon.png'
+      icon: '<%= "#{base_url}/icon.png" %>'
     });
 
     <% if flash[:notice] %>
