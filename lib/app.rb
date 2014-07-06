@@ -12,7 +12,9 @@ class SinatraApp < Sinatra::Base
     shopify_session do
       @service = FulfillmentService.find_by(shop: current_shop_name)
 
-      # Fetch all the variants being fulfilled with this service
+      # Fetch all the variants being fulfilled with this service, note
+      # you will probably want to use a different approach to get this
+      # data for a production app.
       @products = []
       page = 1
       begin
