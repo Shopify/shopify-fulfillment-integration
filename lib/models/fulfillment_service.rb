@@ -46,7 +46,7 @@ class FulfillmentService < ActiveRecord::Base
   private
 
   def instance
-    @instance = ActiveMerchant::Fulfillment::ShipwireService.new(
+    @instance ||= ActiveMerchant::Fulfillment::ShipwireService.new(
       :login => username,
       :password => password,
       :test => true
