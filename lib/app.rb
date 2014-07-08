@@ -115,7 +115,7 @@ class SinatraApp < Sinatra::Base
       fulfillment_service = ShopifyAPI::FulfillmentService.new({
         name: "my-fulfillment-service",
         handle: "my-fulfillment-service",
-        callback_url: "http://fulfillment-service.herokuapp.com",
+        callback_url: base_url,
         inventory_management: true,
         tracking_support: true,
         requires_shipping_method: false,
@@ -125,14 +125,14 @@ class SinatraApp < Sinatra::Base
 
       fulfillment_webhook = ShopifyAPI::Webhook.new({
         topic: "fulfillments/create",
-        address: "http://fulfillment-service.herokuapp.com/fulfill.json",
+        address: "#{base_url}/fulfill.json",
         format: "json"
       })
       fulfillment_webhook.save
 
       uninstall_webhook = ShopifyAPI::Webhook.new({
         topic: "app/uninstalled",
-        address: "http://fulfillment-service.herokuapp.com/uninstall.json",
+        address: "#{base_url}/uninstall.json",
         format: "json"
       })
       uninstall_webhook.save
