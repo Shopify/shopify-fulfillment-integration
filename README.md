@@ -7,7 +7,7 @@ Check out the code in `lib/*` and read the [docs](http://docs.shopify.com/api/fu
 
 This app is built using the [shopify-sinatra-app](https://github.com/pickle27/shopify-sinatra-app) framework, take a look at the framework [readme](https://github.com/pickle27/shopify-sinatra-app) for information about developing locally and deploying to Heroku.
 
-This particular app is an example integration with [Amazon Marketplace Web]https://developer.amazonservices.ca/)
+This particular app is an example integration with [Amazon Marketplace Web](https://developer.amazonservices.ca/)
 
 After you have the app running visit the install page (located at your url + '/install') and install the app on your Shopify test store. Then you will need to add your Amazon Marketplace Web Credentials.
 
