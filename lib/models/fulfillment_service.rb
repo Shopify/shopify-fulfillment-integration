@@ -46,10 +46,9 @@ class FulfillmentService < ActiveRecord::Base
   private
 
   def instance
-    @instance ||= ActiveMerchant::Fulfillment::ShipwireService.new(
+    @instance ||= ActiveMerchant::Fulfillment::AmazonMarketplaceWebService.new(
       :login => username,
       :password => password,
-      :test => true,
       :include_empty_stock => true
     )
   end
@@ -87,14 +86,14 @@ class FulfillmentService < ActiveRecord::Base
   end
 
   def shipping_code(label)
-    methods = ActiveMerchant::Fulfillment::ShipwireService.shipping_methods
+    methods = ActiveMerchant::Fulfillment::AmazonMarketplaceWebService.shipping_methods
     methods.each{ |title, code| return code if title.downcase == label.to_s.downcase }
-    return label  # make sure to never send an empty shipping method to Shipwire
+    return nil
   end
 
   def check_credentials
     unless instance.valid_credentials?
-      errors.add(:password, "Must have valid shipwire credentials to use the services provided by this app.")
+      errors.add(:password, "Must have valid Amazon Marketplace Web credentials to use the services provided by this app.")
       return false
     end
   end
