@@ -49,7 +49,8 @@ class FulfillmentService < ActiveRecord::Base
     @instance ||= ActiveMerchant::Fulfillment::ShipwireService.new(
       :login => username,
       :password => password,
-      :test => true
+      :test => true,
+      :include_empty_stock => true
     )
   end
 
