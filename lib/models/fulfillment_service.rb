@@ -46,10 +46,10 @@ class FulfillmentService < ActiveRecord::Base
   private
 
   def instance
-    @instance ||= ActiveMerchant::Fulfillment::ShipwireService.new(
+    @instance ||= ActiveMerchant::Fulfillment::WebgistixService.new(
       :login => username,
       :password => password,
-      :test => true
+      :include_empty_stock => true,
     )
   end
 
@@ -81,14 +81,19 @@ class FulfillmentService < ActiveRecord::Base
      :comment         => 'Thank you for your purchase',
      :email           => order.email,
      :tracking_number => fulfillment.tracking_number,
-     :warehouse       => '00', # shipwire specific
-     :shipping_method => "1D", # order.shipping_lines.first.code, also shipwire specific
+     :shipping_method => shipping_code(order.shipping_lines.first.code),
      :note            => order.note}
+  end
+
+  def shipping_code(label)
+    methods = ActiveMerchant::Fulfillment::WebgistixService.shipping_methods
+    methods.each{ |title, code| return code if title.downcase == label.to_s.downcase }
+    return label  # make sure to never send an empty shipping method to Webgistix
   end
 
   def check_credentials
     unless instance.valid_credentials?
-      errors.add(:password, "Must have valid shipwire credentials to use the services provided by this app.")
+      errors.add(:password, "Must have valid Webgistix credentials to use the services provided by this app.")
       return false
     end
   end
