@@ -82,9 +82,14 @@ class FulfillmentService < ActiveRecord::Base
      :comment         => 'Thank you for your purchase',
      :email           => order.email,
      :tracking_number => fulfillment.tracking_number,
-     :warehouse       => '00', # shipwire specific
-     :shipping_method => "1D", # order.shipping_lines.first.code, also shipwire specific
+     :shipping_method => shipping_code(order.shipping_lines.first.code),
      :note            => order.note}
+  end
+
+  def shipping_code(label)
+    methods = ActiveMerchant::Fulfillment::ShipwireService.shipping_methods
+    methods.each{ |title, code| return code if title.downcase == label.to_s.downcase }
+    return label  # make sure to never send an empty shipping method to Shipwire
   end
 
   def check_credentials
