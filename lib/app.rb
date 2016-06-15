@@ -52,7 +52,7 @@ class SinatraApp < Sinatra::Base
   end
 
   # /fulfill
-  # reciever of fulfillments/create webhook
+  # receiver of fulfillments/create webhook
   # if the fulfillment uses this service then
   # acquire and parse the data we need to forward
   # the request to the fulfillment service. Send the request
@@ -65,7 +65,7 @@ class SinatraApp < Sinatra::Base
 
   # /fetch_stock
   # Listen for a request from Shopify
-  # When a request is recieved make a request to fulfillment service
+  # When a request is received make a request to fulfillment service
   # Parse response from fulfillment service
   # Respond to Shopify
   #
@@ -85,7 +85,7 @@ class SinatraApp < Sinatra::Base
 
   # /fetch_tracking_numbers
   # Listen for a request from Shopify
-  # When a request is recieved make a request to fulfillment service
+  # When a request is received make a request to fulfillment service
   # Parse response from fulfillment service
   # Respond to Shopify
   #
@@ -152,7 +152,7 @@ class SinatraApp < Sinatra::Base
 
   # This is a helper method in the same vein as the webhook_session
   # method provided by shopify-sinatra-app only for handling the
-  # fulfillment requests which are slighlty different than webhooks
+  # fulfillment requests which are slightly different than webhooks
   def fulfillment_session(&blk)
     shop_name = params["shop"]
     service = FulfillmentService.find_by(shop: shop_name)
