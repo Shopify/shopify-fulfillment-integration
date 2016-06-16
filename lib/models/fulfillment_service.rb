@@ -54,7 +54,7 @@ class FulfillmentService < ActiveRecord::Base
     )
   end
 
-   def address(address_object)
+  def address(address_object)
     {:name     => address_object.name,
      :company  => address_object.company,
      :address1 => address_object.address1,
