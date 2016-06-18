@@ -40,8 +40,8 @@ class SinatraApp < Sinatra::Base
       params["ids"].each do |id|
         product = ShopifyAPI::Product.find(id)
         product.variants.each do |variant|
-          variant.fulfillment_service = 'my-fulfillment-service'
-          variant.inventory_management = 'my-fulfillment-service'
+          variant.fulfillment_service = FulfillmentService.service_name
+          variant.inventory_management = FulfillmentService.service_name
         end
         saved +=1 if product.save
       end
@@ -113,8 +113,8 @@ class SinatraApp < Sinatra::Base
     shopify_session do
 
       fulfillment_service = ShopifyAPI::FulfillmentService.new({
-        name: "my-fulfillment-service",
-        handle: "my-fulfillment-service",
+        name: FulfillmentService.service_name,
+        handle: FulfillmentService.service_name,
         callback_url: base_url,
         inventory_management: true,
         tracking_support: true,
