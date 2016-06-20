@@ -123,6 +123,9 @@ class SinatraApp < Sinatra::Base
       })
       fulfillment_service.save
 
+      # note you want to use the ShopifyApp::WebHooksManager in production
+      # as it can easily manage many hooks, makes sure all hooks are
+      # installed in every oauth call and has queues which is more robust.
       fulfillment_webhook = ShopifyAPI::Webhook.new({
         topic: "fulfillments/create",
         address: "#{base_url}/fulfill.json",
